@@ -1,0 +1,3243 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="Cat Archive" />
+  <title>THE HOUSE YOUR CAT KNOWS - Digital Archive</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --paper: #fbfaf6;
+      --panel: #f0f3eb;
+      --ink: #24211e;
+      --soft: #656961;
+      --line: #d9ddd2;
+      --accent: #5c6557;
+      --white: #fffefa;
+      --danger: #7a3b2e;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: #e5e1d8;
+      color: var(--ink);
+      line-height: 1.45;
+    }
+    .shell {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+    .hero {
+      background: var(--paper);
+      border: 1px solid #c9c4b8;
+      padding: 28px;
+      margin-bottom: 18px;
+    }
+    h1, h2 {
+      font-family: Georgia, "Times New Roman", serif;
+      margin: 0;
+      line-height: 1.04;
+      letter-spacing: 0;
+    }
+    h1 { max-width: 540px; font-size: clamp(36px, 7vw, 72px); }
+    h2 { font-size: 30px; }
+    h3 {
+      margin: 0 0 6px;
+      font-size: 11px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+    p { margin: 0; }
+    .subtitle {
+      max-width: 640px;
+      margin-top: 16px;
+      color: var(--soft);
+      font-size: 16px;
+    }
+    .toolbar {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 22px;
+    }
+    button, .file-like {
+      border: 1px solid var(--accent);
+      background: var(--accent);
+      color: white;
+      padding: 9px 13px;
+      border-radius: 6px;
+      font: inherit;
+      cursor: pointer;
+    }
+    button.secondary {
+      background: transparent;
+      color: var(--accent);
+    }
+    .notice {
+      margin: 0 0 18px;
+      padding: 14px 16px;
+      border-left: 4px solid var(--accent);
+      background: var(--panel);
+      color: #3a3b36;
+    }
+    .filters {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin: 18px 0;
+    }
+    .filters button {
+      background: var(--white);
+      color: var(--ink);
+      border-color: var(--line);
+    }
+    .filters button[aria-pressed="true"] {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+    }
+    .activity {
+      background: var(--paper);
+      border: 1px solid #c9c4b8;
+      padding: 22px;
+      margin: 16px 0;
+    }
+    .activity[hidden] { display: none; }
+    .activity-head {
+      display: grid;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+    .eyebrow {
+      font-size: 11px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+    .copy-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+    .copy-grid section {
+      border-top: 1px solid var(--line);
+      padding-top: 8px;
+      min-width: 0;
+    }
+    .copy-grid p {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 15px;
+    }
+    .copy-grid .safety {
+      background: var(--panel);
+      border-top: 0;
+      padding: 10px;
+    }
+    .work-area {
+      display: grid;
+      grid-template-columns: minmax(260px, 1fr) minmax(260px, 1fr);
+      gap: 14px;
+      align-items: start;
+    }
+    .text-entry, .reference {
+      display: grid;
+      gap: 6px;
+    }
+    .text-entry span, .reference span {
+      font-size: 12px;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: .05em;
+    }
+    textarea, input[type="text"] {
+      width: 100%;
+      border: 1px solid var(--line);
+      background: var(--white);
+      color: var(--ink);
+      border-radius: 4px;
+      padding: 10px;
+      font: inherit;
+    }
+    textarea { resize: vertical; min-height: 150px; }
+    .slot {
+      border: 1px solid var(--line);
+      background: rgba(255, 254, 250, .55);
+      padding: 12px;
+      display: grid;
+      gap: 10px;
+    }
+    .slot-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    .slot-head p {
+      color: var(--soft);
+      font-size: 13px;
+    }
+    .slot-head button {
+      background: transparent;
+      color: var(--danger);
+      border-color: #b99186;
+      padding: 6px 9px;
+      font-size: 12px;
+    }
+    input[type="file"] {
+      width: 100%;
+      border: 1px dashed var(--line);
+      background: var(--paper);
+      padding: 10px;
+      border-radius: 4px;
+    }
+    .preview {
+      border: 1px solid var(--line);
+      background: var(--paper);
+      min-height: 120px;
+      display: grid;
+      place-items: center;
+      color: var(--soft);
+      overflow: hidden;
+      padding: 8px;
+      text-align: center;
+    }
+    .preview img, .preview video {
+      max-width: 100%;
+      max-height: 280px;
+      display: block;
+    }
+    .preview audio { width: 100%; }
+    .preview-holder { display: grid; place-items: center; width: 100%; }
+    .preview-note {
+      display: grid;
+      gap: 8px;
+      justify-items: center;
+      padding: 4px 2px;
+    }
+    .preview-note p {
+      margin: 0;
+      max-width: 36em;
+      font-size: 13px;
+      line-height: 1.45;
+      color: var(--ink);
+    }
+    .preview-note a { font-size: 13px; color: var(--accent); }
+    .preview-meta { margin: 8px 0 0; font-size: 12px; color: var(--soft); }
+    .activity-meta {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+      padding-top: 10px;
+      border-top: 1px solid var(--line);
+      color: var(--soft);
+      font-size: 12px;
+    }
+    .status {
+      margin-top: 10px;
+      color: var(--soft);
+      font-size: 13px;
+      min-height: 20px;
+    }
+    @media (max-width: 780px) {
+      .shell { padding: 14px; }
+      .hero, .activity { padding: 18px; }
+      .copy-grid, .work-area { grid-template-columns: 1fr; }
+      h1 { font-size: 40px; }
+    }
+    @media print {
+      body { background: white; }
+      .toolbar, .filters, input[type="file"], .slot-head button { display: none; }
+      .activity { break-inside: avoid; }
+    }
+    .zip-note {
+    margin-top: 0.85rem; font-size: 0.95rem; line-height: 1.45; color: #4a4740;
+    max-width: 44rem;
+  }
+  .backup-state {
+    margin-top: 0.9rem; font-size: 0.92rem; display: flex; align-items: center;
+    gap: 0.5rem; flex-wrap: wrap;
+  }
+  .backup-state .dot { width: 0.6rem; height: 0.6rem; border-radius: 50%;
+    background: #5c6557; display: inline-block; }
+  .backup-state.warn .dot { background: #8a6d3b; }
+  .backup-state.warn { color: #6b5428; }
+  .storage-warning {
+    margin-top: 0.9rem; padding: 0.8rem 0.9rem; border-left: 3px solid #8a6d3b;
+    background: #f6efe2; color: #5a4620; font-size: 0.95rem; line-height: 1.45;
+  }
+  .cats {
+    display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap;
+    margin-top: 1rem; padding-top: 0.9rem; border-top: 1px solid #d7d4cc;
+  }
+  .cats label { font-size: 0.78rem; letter-spacing: 0.07em;
+    text-transform: uppercase; color: #5c6557; font-weight: 600; }
+  .cats select { font: inherit; padding: 0.35rem 0.5rem; border: 1px solid #d7d4cc;
+    background: #fbfaf6; color: #24211e; border-radius: 2px; min-width: 11rem; }
+</style>
+</head>
+<body>
+  <main class="shell">
+    <section class="hero">
+      <h1>THE HOUSE YOUR CAT KNOWS</h1>
+      <p class="subtitle">Small ways to notice and save the life you share. This digital archive lets you attach your own real photos, videos and sounds to the same activities used by the print book.</p>
+      <div class="toolbar">
+        <button type="button" id="exportFullArchive">Save your archive &rarr; ZIP</button>
+        <button type="button" id="importArchive">Open an archive ZIP</button>
+        <button type="button" class="secondary" id="exportManifest">Download archive manifest</button>
+        <button type="button" class="secondary" id="printArchive">Print current view</button>
+        <input type="file" id="importArchiveInput" accept=".zip,application/zip" hidden />
+      </div>
+      <div class="cats" id="catBar">
+        <label for="catSelect">This archive belongs to</label>
+        <select id="catSelect" aria-label="Which cat's archive to open"></select>
+        <button type="button" class="secondary" id="addCat">Add another cat</button>
+        <button type="button" class="secondary" id="renameCat">Rename</button>
+      </div>
+      <p class="zip-note">The ZIP is your archive. This page is where you work
+        on it — <strong>Save your archive</strong> when you are done, and
+        <strong>Open an archive ZIP</strong> to carry on, on this device or
+        any other.</p>
+      <div class="backup-state" id="backupState" role="status" aria-live="polite"></div>
+      <div class="storage-warning" id="storageWarning" hidden></div>
+      <div class="status" id="status" role="status"></div>
+    </section>
+
+    <p class="notice web-hint" id="phoneLink" hidden>On a phone or tablet? Open this archive in your browser instead: <a href="https://quiet-days-books.github.io/the-house-your-cat-knows/">quiet-days-books.github.io/the-house-your-cat-knows</a>. A file opened from your phone’s Files app can show this page but cannot save anything.</p>
+    <p class="notice web-hint" id="homeScreenTip" hidden><strong>On iPhone or iPad:</strong> tap <strong>Share → Add to Home Screen</strong> and open the archive from there. Safari keeps a home-screen archive; in an ordinary tab it may clear what you saved after a week without a visit. Save a ZIP either way.</p>
+
+    <p class="notice">Each cat has its own archive here. Switching cats above changes which notes and files you are looking at; nothing is mixed and nothing is lost. Files stay on this device, in this browser. Use <strong>Save your archive</strong> to keep a copy you can open anywhere, and keep your original photos, videos and sounds too. <strong>Download a backup on the first day, not on the day you need it</strong> — clearing this browser’s data removes the archive.</p>
+
+    <nav class="filters" aria-label="Filter activities">
+      <button type="button" data-filter="all" aria-pressed="true">All</button>
+      <button type="button" data-filter="photo">Photo</button>
+      <button type="button" data-filter="video">Video</button>
+      <button type="button" data-filter="audio">Audio</button>
+      <button type="button" data-filter="map">Map</button>
+    </nav>
+
+    
+    <article class="activity" id="ACT-01" data-activity-id="ACT-01" data-routes="map,note,photo">
+      <header class="activity-head">
+        <div class="eyebrow">01 / Places / save in Places</div>
+        <h2>A Map of Their Routes</h2>
+      </header>
+      <div class="copy-grid">
+        <section>
+          <h3>Notice</h3>
+          <p>Your cat probably has a map of the house that no one else has drawn. It may run under chairs, around one table leg, over the same rug and through a doorway they pause in every time.</p>
+        </section>
+        <section>
+          <h3>Try This</h3>
+          <p>Watch one normal route without directing it. Later, make a simple sketch of the path. Mark rooms, thresholds, surfaces, pauses and the places they avoid.</p>
+        </section>
+        <section>
+          <h3>If Needed</h3>
+          <p>For a low-mobility cat, map the route from bed to bowl, litter box, window or favorite resting place.</p>
+        </section>
+        <section class="safety">
+          <h3>Keep Safe</h3>
+          <p>Do not close doors, move furniture or call your cat through a route for the page.</p>
+        </section>
+        <section>
+          <h3>Save It</h3>
+          <p>Save the sketch or a photo of it in Places.</p>
+        </section>
+        <section>
+          <h3>If Today Is Quiet</h3>
+          <p>If there is no route today, write down the place where they stayed. Stillness is also geography.</p>
+        </section>
+      </div>
+      <div class="work-area">
+        <label class="text-entry">
+          <span>Your note</span>
+          <textarea data-text-field="note" rows="7" placeholder="Write what happened here."></textarea>
+        </label>
+        
+        <section class="slot" data-slot-route="photo">
+          <div class="slot-head">
+            <div>
+              <h3>Photo</h3>
+              <p>Choose a real photo from your device.</p>
+            </div>
+            <button type="button" data-remove-file="photo">Remove</button>
+          </div>
+          <input type="file" accept="image/*" data-file-route="photo" aria-label="A Map of Their Routes Photo file" />
+          <div class="preview" data-preview="photo">No file chosen yet.</div>
+          <label class="reference">
+            <span>Filename, folder or short note</span>
+            <input type="text" data-text-field="photo_reference" placeholder="Example: Photos / ACT-01 / window.jpg" />
+          </label>
+        </section>
+        <section class="slot" data-slot-route="map">
+          <div class="slot-head">
+            <div>
+              <h3>Map or route sketch</h3>
+              <p>Attach a scan or photo of the route map if you make one outside this file.</p>
+            </div>
+            <button type="button" data-remove-file="map">Remove</button>
+          </div>
+          <input type="file" accept="image/*,.pdf" data-file-route="map" aria-label="A Map of Their Routes Map or route sketch file" />
+          <div class="preview" data-preview="map">No file chosen yet.</div>
+          <label class="reference">
+            <span>Filename, folder or short note</span>
+            <input type="text" data-text-field="map_reference" placeholder="Example: Photos / ACT-01 / window.jpg" />
+          </label>
+        </section>
+      </div>
+      <footer class="activity-meta">
+        <span>Routes: Map or route sketch / Note / Photo</span>
+        <!-- Имена флагов безопасности — внутренняя лексика: CONSENT, NO_WAKE,
+             A2_ONLY ничего не говорят покупателю и не должны стоять на
+             странице, которую он открывает. То, что они означают, уже сказано
+             человеческими словами в KEEP SAFE каждой активности. -->
+      </footer>
+    </article>
+
+    <article class="activity" id="ACT-02" data-activity-id="ACT-02" data-routes="note,photo">
+      <header class="activity-head">
+        <div class="eyebrow">02 / Places / save in Places</div>
+        <h2>The First Place in the Morning</h2>
+      </header>
+      <div class="copy-grid">
+        <section>
+          <h3>Notice</h3>
+          <p>Before anyone has made the day into a plan, your cat has already chosen a place. The end of the bed, the hallway, the kitchen chair, the warm machine, the room you did not expect.</p>
+        </section>
+        <section>
+          <h3>Try This</h3>
+          <p>The first time you notice your cat today, record where they are. Add the time if you want, but do not turn it into a tracker.</p>
+        </section>
+        <section>
+          <h3>If Needed</h3>
+          <p>If mornings are busy, do it on the next quiet day. One morning is enough.</p>
+        </section>
+        <section class="safety">
+          <h3>Keep Safe</h3>
+          <p>Do not wake, move or uncover your cat to get the note or photo.</p>
+        </section>
+        <section>
+          <h3>Save It</h3>
+          <p>Save a sentence or photo in Places.</p>
+        </section>
+        <section>
+          <h3>If Today Is Quiet</h3>
+          <p>If you do not see them until later, write that down. That is the truth of this house, not a perfect morning scene.</p>
+        </section>
+      </div>
+      <div class="work-area">
+        <label class="text-entry">
+          <span>Your note</span>
+          <textarea data-text-field="note" rows="7" placeholder="Write what happened here."></textarea>
+        </label>
+        
+        <section class="slot" data-slot-route="photo">
+          <div class="slot-head">
+            <div>
+              <h3>Photo</h3>
+              <p>Choose a real photo from your device.</p>
+            </div>
+            <button type="button" data-remove-file="photo">Remove</button>
+          </div>
+          <input type="file" accept="image/*" data-file-route="photo" aria-label="The First Place in the Morning Photo file" />
+          <div class="preview" data-preview="photo">No file chosen yet.</div>
+          <label class="reference">
+            <span>Filename, folder or short note</span>
+            <input type="text" data-text-field="photo_reference" placeholder="Example: Photos / ACT-02 / window.jpg" />
+          </label>
+        </section>
+      </div>
+      <footer class="activity-meta">
+        <span>Routes: Note / Photo</span>
+        <!-- Имена флагов безопасности — внутренняя лексика: CONSENT, NO_WAKE,
+             A2_ONLY ничего не говорят покупателю и не должны стоять на
+             странице, которую он открывает. То, что они означают, уже сказано
+             человеческими словами в KEEP SAFE каждой активности. -->
+      </footer>
+    </article>
+
+    <article class="activity" id="ACT-03" data-activity-id="ACT-03" data-routes="photo,note">
+      <header class="activity-head">
+        <div class="eyebrow">03 / Places / save in Places</div>
+        <h2>The Window They Choose</h2>
+      </header>
+      <div class="copy-grid">
+        <section>
+          <h3>Notice</h3>
+          <p>A window can be a theater, a heater, a weather report and a private office. The important window is not always the prettiest one. It is the one your cat returns to.</p>
+        </section>
+        <section>
+          <h3>Try This</h3>
+          <p>Photograph or describe the window your cat already uses. Add what the light is doing and what time of day the place seems to matter.</p>
+        </section>
+        <section>
+          <h3>If Needed</h3>
+          <p>If your cat does not use windows, choose any safe watching place: a doorway, stair, chair back or quiet edge of a room.</p>
+        </section>
+        <section class="safety">
+          <h3>Keep Safe</h3>
+          <p>Use only a closed, secured window or an already-safe system. Do not open a window or balcony for this page.</p>
+        </section>
+        <section>
+          <h3>Save It</h3>
+          <p>Save the photo and note in Places.</p>
+        </section>
+        <section>
+          <h3>If Today Is Quiet</h3>
+          <p>If they choose a different spot today, keep that. The chosen place matters more than the planned one.</p>
+        </section>
+      </div>
+      <div class="work-area">
+        <label class="text-entry">
+          <span>Your note</span>
+          <textarea data-text-field="note" rows="7" placeholder="Write what happened here."></textarea>
+        </label>
+        
+        <section class="slot" data-slot-route="photo">
+          <div class="slot-head">
+            <div>
+              <h3>Photo</h3>
+              <p>Choose a real photo from your device.</p>
+            </div>
+            <button type="button" data-remove-file="photo">Remove</button>
+          </div>
+          <input type="file" accept="image/*" data-file-route="photo" aria-label="The Window They Choose Photo file" />
+          <div class="preview" data-preview="photo">No file chosen yet.</div>
+          <label class="reference">
+            <span>Filename, folder or short note</span>
+            <input type="text" data-text-field="photo_reference" placeholder="Example: Photos / ACT-03 / window.jpg" />
+          </label>
+        </section>
+      </div>
+      <footer class="activity-meta">
+        <span>Routes: Photo / Note</span>
+        <!-- Имена флагов безопасности — внутренняя лексика: CONSENT, NO_WAKE,
+             A2_ONLY ничего не говорят покупателю и не должны стоять на
+             странице, которую он открывает. То, что они означают, уже сказано
+             человеческими словами в KEEP SAFE каждой активности. -->
+      </footer>
+    </article>
+
+    <article class="activity" id="ACT-04" data-activity-id="ACT-04" data-routes="note,photo">
+      <header class="activity-head">
+        <div class="eyebrow">04 / Places / save in Places</div>
+        <h2>The Doorway Pause</h2>
+      </header>
+      <div class="copy-grid">
+        <section>
+          <h3>Notice</h3>
+          <p>Doorways are good places to think. Your cat may stop there as if the room on one side and the room on the other are making competing arguments.</p>
+        </section>
+        <section>
+          <h3>Try This</h3>
+          <p>Notice one doorway, hall or threshold where your cat pauses. Write what they can see from there and what usually happens next.</p>
+        </section>
+        <section>
+          <h3>If Needed</h3>
+          <p>A threshold can be a rug edge, a stair, the place before a carrier, or the line between two favorite rooms.</p>
+        </section>
+        <section class="safety">
+          <h3>Keep Safe</h3>
+          <p>Do not block the doorway, close the cat in, or make the pause last longer.</p>
+        </section>
+        <section>
+          <h3>Save It</h3>
+          <p>Save the note or photo in Places.</p>
+        </section>
+        <section>
+          <h3>If Today Is Quiet</h3>
+          <p>If they pass through without drama, write that down. Some decisions are brisk.</p>
+        </section>
+      </div>
+      <div class="work-area">
+        <label class="text-entry">
+          <span>Your note</span>
+          <textarea data-text-field="note" rows="7" placeholder="Write what happened here."></textarea>
+        </label>
+        
+        <section class="slot" data-slot-route="photo">
+          <div class="slot-head">
+            <div>
+              <h3>Photo</h3>
+              <p>Choose a real photo from your device.</p>
+            </div>
+            <button type="button" data-remove-file="photo">Remove</button>
+          </div>
+          <input type="file" accept="image/*" data-file-route="photo" aria-label="The Doorway Pause Photo file" />
+          <div class="preview" data-preview="photo">No file chosen yet.</div>
+          <label class="reference">
+            <span>Filename, folder or short note</span>
+            <input type="text" data-text-field="photo_reference" placeholder="Example: Photos / ACT-04 / window.jpg" />
+          </label>
+        </section>
+      </div>
+      <footer class="activity-meta">
+        <span>Routes: Note / Photo</span>
+        <!-- Имена флагов безопасности — внутренняя лексика: CONSENT, NO_WAKE,
+             A2_ONLY ничего не говорят покупателю и не должны стоять на
+             странице, которую он открывает. То, что они означают, уже сказано
+             человеческими словами в KEEP SAFE каждой активности. -->
+      </footer>
+    </article>
+
+    <article class="activity" id="ACT-05" data-activity-id="ACT-05" data-routes="photo,sketch,note">
+      <header class="activity-head">
+        <div class="eyebrow">05 / Places / save in Places</div>
+        <h2>The High Place</h2>
+      </header>
+      <div class="copy-grid">
+        <section>
+          <h3>Notice</h3>
+          <p>A high place changes the whole room. From there, a cat can watch feet, doors, weather, shoulders and the small business of human errands.</p>
+        </section>
+        <section>
+          <h3>Try This</h3>
+          <p>Record one high place your cat already uses. Photograph it empty if your cat is not there. Add what can be seen from that height.</p>
+        </section>
+        <section>
+          <h3>If Needed</h3>
+          <p>If your cat no longer climbs, choose the best low place instead. A low view can be just as much theirs.</p>
+        </section>
+        <section class="safety">
+          <h3>Keep Safe</h3>
+          <p>Do not lure your cat upward or ask them to repeat a jump.</p>
+        </section>
+        <section>
+          <h3>Save It</h3>
+          <p>Save the photo or sketch in Places.</p>
+        </section>
+        <section>
+          <h3>If Today Is Quiet</h3>
+          <p>If the high place is unused today, record the place itself. A familiar perch can be part of the archive without a cat in the frame.</p>
+        </section>
+      </div>
+      <div class="work-area">
+        <label class="text-entry">
+          <span>Your note</span>
+          <textarea data-text-field="note" rows="7" placeholder="Write what happened here."></textarea>
+        </label>
+        
+        <section class="slot" data-slot-route="photo">
+          <div class="slot-head">
+            <div>
+              <h3>Photo</h3>
+              <p>Choose a real photo from your device.</p>
+            </div>
+            <button type="button" data-remove-file="photo">Remove</button>
+          </div>
+          <input type="file" accept="image/*" data-file-route="photo" aria-label="The High Place Photo file" />
+          <div class="preview" data-preview="photo">No file chosen yet.</div>
+          <label class="reference">
+            <span>Filename, folder or short note</span>
+            <input type="text" data-text-field="photo_reference" placeholder="Example: Photos / ACT-05 / window.jpg" />
+          </label>
+        </section>
+        <section class="slot" data-slot-route="sketch">
+          <div class="slot-head">
+            <div>
+              <h3>Sketch</h3>
+              <p>Attach a scan or photo of the sketch if you make one outside this file.</p>
+            </div>
+            <button type="button" data-remove-file="sketch">Remove</button>
+          </div>
+          <input type="file" accept="image/*,.pdf" data-file-route="sketch" aria-label="The High Place Sketch file" />
+          <div class="preview" data-preview="sketch">No file chosen yet.</div>
+          <label class="reference">
+            <span>Filename, folder or short note</span>
+            <input type="text" data-text-field="sketch_reference" placeholder="Example: Photos / ACT-05 / window.jpg" />
+          </label>
+        </section>
+      </div>
+      <footer class="activity-meta">
+        <span>Routes: Photo / Sketch / Note</span>
+        <!-- Имена флагов безопасности — внутренняя лексика: CONSENT, NO_WAKE,
+             A2_ONLY ничего не говорят покупателю и не должны стоять на
+             странице, которую он открывает. То, что они означают, уже сказано
+             человеческими словами в KEEP SAFE каждой активности. -->
+      </footer>
+    </article>
+
+    <article class="activity" id="ACT-06" data-activity-id="ACT-06" data-routes="note,sketch">
+      <header class="activity-head">
+        <div class="eyebrow">06 / Places / save in Places</div>
+        <h2>The Hiding Place We Respect</h2>
+      </header>
+      <div class="copy-grid">
+        <section>
+          <h3>Notice</h3>
+          <p>Some places matter because they are not for you. Under the bed, behind the chair, inside the closet, the quiet corner with one reliable exit.</p>
+        </section>
+        <section>
+          <h3>Try This</h3>
+          <p>Name one hiding or resting place your cat uses. Write why it might feel safe: darkness, height, quiet, distance, a familiar smell, a good escape route.</p>
+        </section>
+        <section>
+          <h3>If Needed</h3>
+          <p>If you do not know the exact place, write what you do know: the room, the time, the direction they go.</p>
+        </section>
+        <section class="safety">
+          <h3>Keep Safe</h3>
+          <p>Do not reach in, photograph inside or make the refuge less private.</p>
+        </section>
+        <section>
+          <h3>Save It</h3>
+          <p>Save the note in Places.</p>
+        </section>
+        <section>
+          <h3>If Today Is Quiet</h3>
+          <p>If your cat has no obvious hiding place, write down where they go when they want less of the household.</p>
+        </section>
+      </div>
+      <div class="work-area">
+        <label class="text-entry">
+          <span>Your note</span>
+          <textarea data-text-field="note" rows="7" placeholder="Write what happened here."></textarea>
+        </label>
+        
+        <section class="slot" data-slot-route="sketch">
+          <div class="slot-head">
+            <div>
+              <h3>Sketch</h3>
+              <p>Attach a scan or photo of the sketch if you make one outside this file.</p>
+            </div>
+            <button type="button" data-remove-file="sketch">Remove</button>
+          </div>
+          <input type="file" accept="image/*,.pdf" data-file-route="sketch" aria-label="The Hiding Place We Respect Sketch file" />
+          <div class="preview" data-preview="sketch">No file chosen yet.</div>
+          <label class="reference">
+            <span>Filename, folder or short note</span>
+            <input type="text" data-text-field="sketch_reference" placeholder="Example: Photos / ACT-06 / window.jpg" />
+          </label>
+        </section>
+      </div>
+      <footer class="activity-meta">
+        <span>Routes: Note / Sketch</span>
+        <!-- Имена флагов безопасности — внутренняя лексика: CONSENT, NO_WAKE,
+             A2_ONLY ничего не говорят покупателю и не должны стоять на
+             странице, которую он открывает. То, что они означают, уже сказано
+             человеческими словами в KEEP SAFE каждой активности. -->
+      </footer>
+    </article>
+
+    <article class="activity" id="ACT-07" data-activity-id="ACT-07" data-routes="photo,note">
+      <header class="activity-head">
+        <div class="eyebrow">07 / Places / save in Places</div>
+        <h2>The Place That Became Theirs</h2>
+      </header>
+      <div class="copy-grid">
+        <section>
+          <h3>Notice</h3>
+          <p>A place can become your cat&#39;s without anyone announcing it. A blanket, a box, one end of the couch, the exact square of floor that now somehow belongs to them.</p>
+        </section>
+        <section>
+          <h3>Try This</h3>
+          <p>Choose one place your cat claimed over time. Photograph it as it is and write how it became theirs.</p>
+        </section>
+        <section>
+          <h3>If Needed</h3>
+          <p>If the place is messy, leave it honest. The record is not a home tour.</p>
+        </section>
+        <section class="safety">
+          <h3>Keep Safe</h3>
+          <p>Do not replace a safe familiar object with a prettier prop.</p>
+        </section>
+        <section>
+          <h3>Save It</h3>
+          <p>Save the photo and short story in Places or Our Story.</p>
+        </section>
+        <section>
+          <h3>If Today Is Quiet</h3>
+          <p>If the place is empty today, photograph the evidence: fur, a dent, a blanket fold, the box that should have been recycled.</p>
+        </section>
+      </div>
+      <div class="work-area">
+        <label class="text-entry">
+          <span>Your note</span>
+          <textarea data-text-field="note" rows="7" placeholder="Write what happened here."></textarea>
+        </label>
+        
+        <section class="slot" data-slot-route="photo">
+          <div class="slot-head">
+            <div>
+              <h3>Photo</h3>
+              <p>Choose a real photo from your device.</p>
+            </div>
+            <button type="button" data-remove-file="photo">Remove</button>
+          </div>
+          <input type="file" accept="image/*" data-file-route="photo" aria-label="The Place That Became Theirs Photo file" />
+          <div class="preview" data-preview="photo">No file chosen yet.</div>
+          <label class="reference">
+            <span>Filename, folder or short note</span>
+            <input type="text" data-text-field="photo_reference" placeholder="Example: Photos / ACT-07 / window.jpg" />
+          </label>
+        </section>
+      </div>
+      <footer class="activity-meta">
+        <span>Routes: Photo / Note</span>
+        <!-- Имена флагов безопасности — внутренняя лексика: CONSENT, NO_WAKE,
+             A2_ONLY ничего не говорят покупателю и не должны стоять на
+             странице, которую он открывает. То, что они означают, уже сказано
+             человеческими словами в KEEP SAFE каждой активности. -->
+      </footer>
+    </article>
+
+    <article class="activity" id="ACT-08" data-activity-id="ACT-08" data-routes="note">
+      <header class="activity-head">
+        <div class="eyebrow">08 / Patterns / save in Our Story</div>
+        <h2>The Time They Arrive</h2>
+      </header>
+      <div class="copy-grid">
+        <section>
+          <h3>Notice</h3>
+          <p>Some cats appear at a certain point in the day with the confidence of someone who has an appointment no one else remembers making.</p>
+        </section>
+        <section>
+          <h3>Try This</h3>
+          <p>Notice one time your cat tends to arrive: near your desk, in the kitchen, by the bed, at the bathroom door, beside the chair. Write when it happens and what usually changes in the room.</p>
+        </section>
+        <section>
+          <h3>If Needed</h3>
+          <p>Use a loose time: after coffee, before dinner, when the lights are low. Exact minutes are optional.</p>
+        </section>
+        <section class="safety">
+          <h3>Keep Safe</h3>
+          <p>Do not call them in to prove the pattern.</p>
+        </section>
+        <section>
+          <h3>Save It</h3>
+          <p>Save the note in Our Story.</p>
+        </section>
+        <section>
+          <h3>If Today Is Quiet</h3>
+          <p>If they do not arrive today, write that too. Patterns have days off.</p>
+        </section>
+      </div>
+      <div class="work-area">
+        <label class="text-entry">
+          <span>Your note</span>
+          <textarea data-text-field="note" rows="7" placeholder="Write what happened here."></textarea>
+        </label>
+        
+      </div>
+      <footer class="activity-meta">
+        <span>Routes: Note</span>
+        <!-- Имена флагов безопасности — внутренняя лексика: CONSENT, NO_WAKE,
+             A2_ONLY ничего не говорят покупателю и не должны стоять на
+             странице, которую он открывает. То, что они означают, уже сказано
+             человеческими словами в KEEP SAFE каждой активности. -->
+      </footer>
+    </article>
+
+    <article class="activity" id="ACT-09" data-activity-id="ACT-09" data-routes="note,photo">
+      <header class="activity-head">
+        <div class="eyebrow">09 / Patterns / save in Places</div>
+        <h2>The Nap Rotation</h2>
+      </header>
+      <div class="copy-grid">
+        <section>
+          <h3>Notice</h3>
+          <p>Resting places can make a route of their own. Morning light, a warm rug, the chair after lunch, the quiet corner when the house gets loud.</p>
+        </section>
+        <section>
+          <h3>Try This</h3>
+          <p>Over one day or one week, write down two or three places your cat rests. Add what the light, heat or noise is like in each place.</p>
+        </section>
+        <section>
+          <h3>If Needed</h3>
+          <p>If your cat rests mostly in one place, record that place with more detail instead of trying to find a rotation.</p>
+        </section>
+        <section class="safety">
+          <h3>Keep Safe</h3>
+          <p>Do not wake your cat, use flash or rearrange light to document sleep.</p>
+        </section>
+        <section>
+          <h3>Save It</h3>
+          <p>Save the notes in Places.</p>
+        </section>
+        <section>
+          <h3>If Today Is Quiet</h3>
+          <p>If you only catch one nap, keep one nap. One resting place is enough.</p>
+        </section>
+      </div>
+      <div class="work-area">
+        <label class="text-entry">
+          <span>Your note</span>
+          <textarea data-text-field="note" rows="7" placeholder="Write what happened here."></textarea>
+        </label>
+        
+        <section class="slot" data-slot-route="photo">
+          <div class="slot-head">
+            <div>
+              <h3>Photo</h3>
+              <p>Choose a real photo from your device.</p>
+            </div>
+            <button type="button" data-remove-file="photo">Remove</button>
+          </div>
+          <input type="file" accept="image/*" data-file-route="photo" aria-label="The Nap Rotation Photo file" />
+          <div class="preview" data-preview="photo">No file chosen yet.</div>
+          <label class="reference">
+            <span>Filename, folder or short note</span>
+            <input type="text" data-text-field="photo_reference" placeholder="Example: Photos / ACT-09 / window.jpg" />
+          </label>
+        </section>
+      </div>
+      <footer class="activity-meta">
+        <span>Routes: Note / Photo</span>
+        <!-- Имена флагов безопасности — внутренняя лексика: CONSENT, NO_WAKE,
+             A2_ONLY ничего не говорят покупателю и не должны стоять на
+             странице, которую он открывает. То, что они означают, уже сказано
+             человеческими словами в KEEP SAFE каждой активности. -->
+      </footer>
+    </article>
+
+    <article class="activity" id="ACT-10" data-activity-id="ACT-10" data-routes="photo,note,video">
+      <header class="activity-head">
+        <div class="eyebrow">10 / Patterns / save in Photos</div>
+        <h2>The Scratching Place</h2>
+      </header>
+      <div class="copy-grid">
+        <section>
+          <h3>Notice</h3>
+          <p>A scratching place holds movement even when the cat is not there. A post, a mat, a cardboard edge, one well-used chair side with a long history.</p>
+        </section>
+        <section>
+          <h3>Try This</h3>
+          <p>Photograph or describe the surface your cat already uses. Note the posture, stretch or sound you associate with it.</p>
+        </section>
+        <section>
+          <h3>If Needed</h3>
+          <p>If the surface is too worn or private to photograph, write the sound instead.</p>
+        </section>
+        <section class="safety">
+          <h3>Keep Safe</h3>
+          <p>This page is not training advice. Do not punish, redirect or change the setup for the book.</p>
+        </section>
+        <section>
+          <h3>Save It</h3>
+          <p>Save the photo or note in Photos or Our Story.</p>
+        </section>
+        <section>
+          <h3>If Today Is Quiet</h3>
+          <p>If they do not scratch while you are watching, record the surface. It has been keeping notes for you.</p>
+        </section>
+      </div>
+      <div class="work-area">
+        <label class="text-entry">
+          <span>Your note</span>
+          <textarea data-text-field="note" rows="7" placeholder="Write what happened here."></textarea>
+        </label>
+        
+        <section class="slot" data-slot-route="photo">
+          <div class="slot-head">
+            <div>
+              <h3>Photo</h3>
+              <p>Choose a real photo from your device.</p>
+            </div>
+            <button type="button" data-remove-file="photo">Remove</button>
+          </div>
+          <input type="file" accept="image/*" data-file-route="photo" aria-label="The Scratching Place Photo file" />
+          <div class="preview" data-preview="photo">No file chosen yet.</div>
+          <label class="reference">
+            <span>Filename, folder or short note</span>
+            <input type="text" data-text-field="photo_reference" placeholder="Example: Photos / ACT-10 / window.jpg" />
+          </label>
+        </section>
+        <section class="slot" data-slot-route="video">
+          <div class="slot-head">
+            <div>
+              <h3>Video</h3>
+              <p>Choose a short real video from your device.</p>
+            </div>
+            <button type="button" data-remove-file="video">Remove</button>
+          </div>
+          <input type="file" accept="video/*" data-file-route="video" aria-label="The Scratching Place Video file" />
+          <div class="preview" data-preview="video">No file chosen yet.</div>
+          <label class="reference">
+            <span>Filename, folder or short note</span>
+            <input type="text" data-text-field="video_reference" placeholder="Example: Photos / ACT-10 / window.jpg" />
+          </label>
+        </section>
+      </div>
+      <footer class="activity-meta">
+        <span>Routes: Photo / Note / Video</span>
+        <!-- Имена флагов безопасности — внутренняя лексика: CONSENT, NO_WAKE,
+             A2_ONLY ничего не говорят покупателю и не должны стоять на
+             странице, которую он открывает. То, что они означают, уже сказано
+             человеческими словами в KEEP SAFE каждой активности. -->
+      </footer>
+    </article>
+
+    <article class="activity" id="ACT-11" data-activity-id="ACT-11" data-routes="note,photo,video">
+      <header class="activity-head">
+        <div class="eyebrow">11 / Patterns / save in Our Story</div>
+        <h2>The Grooming Hour</h2>
+      </header>
+      <div class="copy-grid">
+        <section>
+          <h3>Notice</h3>
+          <p>Grooming has its own concentration. The lifted paw, the pause, the practical seriousness of getting one shoulder exactly right.</p>
+        </section>
+        <section>
+          <h3>Try This</h3>
+          <p>Notice a normal grooming moment. Write where it happens, what time of day it tends to appear and what part of the ritual feels most familiar.</p>
+        </section>
+        <section>
+          <h3>If Needed</h3>
+          <p>If brushing is already welcome, you may record that routine. If it is not, keep this to self-grooming.</p>
+        </section>
+        <section class="safety">
+          <h3>Keep Safe</h3>
+          <p>Do not brush, hold or handle your cat just to create an artifact.</p>
+        </section>
+        <section>
+          <h3>Save It</h3>
+          <p>Save the note or short video in Our Story or Videos.</p>
+        </section>
+        <section>
+          <h3>If Today Is Quiet</h3>
+          <p>If grooming does not happen while you are paying attention, write down where you usually see it.</p>
+        </section>
+      </div>
+      <div class="work-area">
+        <label class="text-entry">
+          <span>Your note</span>
+          <textarea data-text-field="note" rows="7" placeholder="Write what happened here."></textarea>
+        </label>
+        
+        <section class="slot" data-slot-route="photo">
+          <div class="slot-head">
+            <div>
+              <h3>Photo</h3>
+              <p>Choose a real photo from your device.</p>
+            </div>
+            <button type="button" data-remove-file="photo">Remove</button>
+          </div>
+          <input type="file" accept="image/*" data-file-route="photo" aria-label="The Grooming Hour Photo file" />
+          <div class="preview" data-preview="photo">No file chosen yet.</div>
+          <label class="reference">
+            <span>Filename, folder or short note</span>
+            <input type="text" data-text-field="photo_reference" placeholder="Example: Photos / ACT-11 / window.jpg" />
+          </label>
+        </section>
+        <section class="slot" data-slot-route="video">
+          <div class="slot-head">
+            <div>
+              <h3>Video</h3>
+              <p>Choose a short real video from your device.</p>
+            </div>
+            <button type="button" data-remove-file="video">Remove</button>
+          </div>
+          <input type="file" accept="video/*" data-file-route="video" aria-label="The Grooming Hour Video file" />
+          <div class="preview" data-preview="video">No file chosen yet.</div>
+          <label class="reference">
+            <span>Filename, folder or short note</span>
+            <input type="text" data-text-field="video_reference" placeholder="Example: Photos / ACT-11 / window.jpg" />
+          </label>
+        </section>
+      </div>
+      <footer class="activity-meta">
+        <span>Routes: Note / Photo / Video</span>
+        <!-- Имена флагов безопасности — внутренняя лексика: CONSENT, NO_WAKE,
+             A2_ONLY ничего не говорят покупателю и не должны стоять на
+             странице, которую он открывает. То, что они означают, уже сказано
+             человеческими словами в KEEP SAFE каждой активности. -->
+      </footer>
+    </article>
+
+    <article class="activity" id="ACT-12" data-activity-id="ACT-12" data-routes="video,note">
+      <header class="activity-head">
+        <div class="eyebrow">12 / Patterns / save in Videos</div>
+        <h2>The Game They Already Know</h2>
+      </header>
+      <div class="copy-grid">
+        <section>
+          <h3>Notice</h3>
+          <p>A good game does not have to look dramatic. It may be a paw under the rug, one sudden dash, a polite attack on a toy that has lost most of its feathers.</p>
+        </section>
+        <section>
+          <h3>Try This</h3>
+          <p>Record or describe a play pattern your cat already knows. Keep it short. Stop while the game still feels easy.</p>
+        </section>
+        <section>
+          <h3>If Needed</h3>
+          <p>For a cat who plays quietly, record the watching, the paw reach or the choice not to chase.</p>
+        </section>
+        <section class="safety">
+          <h3>Keep Safe</h3>
+          <p>Do not leave string or wand toys unattended. Do not use laser play as the default activity.</p>
+        </section>
+        <section>
+          <h3>Save It</h3>
+          <p>Save the short video or note in Videos or Our Story.</p>
+        </section>
+        <section>
+          <h3>If Today Is Quiet</h3>
+          <p>If they decline play, record the toy they chose to ignore. That choice belongs here too.</p>
+        </section>
+      </div>
+      <div class="work-area">
+        <label class="text-entry">
+          <span>Your note</span>
+          <textarea data-text-field="note" rows="7" placeholder="Write what happened here."></textarea>
+        </label>
+        
+        <section class="slot" data-slot-route="video">
+          <div class="slot-head">
+            <div>
+              <h3>Video</h3>
+              <p>Choose a short real video from your device.</p>
+            </div>
+            <button type="button" data-remove-file="video">Remove</button>
+          </div>
+          <input type="file" accept="video/*" data-file-route="video" aria-label="The Game They Already Know Video file" />
+          <div class="preview" data-preview="video">No file chosen yet.</div>
+          <label class="reference">
+            <span>Filename, folder or short note</span>
+            <input type="text" data-text-field="video_reference" placeholder="Example: Photos / ACT-12 / window.jpg" />
+          </label>
+        </section>
+      </div>
+      <footer class="activity-meta">
+        <span>Routes: Video / Note</span>
+        <!-- Имена флагов безопасности — внутренняя лексика: CONSENT, NO_WAKE,
+             A2_ONLY ничего не говорят покупателю и не должны стоять на
+             странице, которую он открывает. То, что они означают, уже сказано
+             человеческими словами в KEEP SAFE каждой активности. -->
+      </footer>
+    </article>
+
+    <article class="activity" id="ACT-13" data-activity-id="ACT-13" data-routes="note,video">
+      <header class="activity-head">
+        <div class="eyebrow">13 / Patterns / save in Places</div>
+        <h2>The Evening Route</h2>
+      </header>
+      <div class="copy-grid">
+        <section>
+          <h3>Notice</h3>
+          <p>Evening changes the house. Lights come on, rooms cool, people slow down or become strangely busy. Your cat may have a route for that shift.</p>
+        </section>
+        <section>
+          <h3>Try This</h3>
+          <p>Notice where your cat goes as the day turns into evening. Write the path, the place they choose or the sound they make when the house changes.</p>
+        </section>
+        <section>
+          <h3>If Needed</h3>
+          <p>If evening is not the meaningful time, choose another daily shift: lunch, quiet afternoon, late night.</p>
+        </section>
+        <section class="safety">
+          <h3>Keep Safe</h3>
+          <p>Use existing light and behavior. Do not wake or stage the route.</p>
+        </section>
+        <section>
+          <h3>Save It</h3>
+          <p>Save the note or short video in Places or Videos.</p>
+        </section>
+        <section>
+          <h3>If Today Is Quiet</h3>
+          <p>If nothing visible happens, record the room as it is when evening arrives. That may be the pattern.</p>
+        </section>
+      </div>
+      <div class="work-area">
+        <label class="text-entry">
+          <span>Your note</span>
+          <textarea data-text-field="note" rows="7" placeholder="Write what happened here."></textarea>
+        </label>
+        
+        <section class="slot" data-slot-route="video">
+          <div class="slot-head">
+            <div>
+              <h3>Video</h3>
+              <p>Choose a short real video from your device.</p>
+            </div>
+            <button type="button" data-remove-file="video">Remove</button>
+          </div>
+          <input type="file" accept="video/*" data-file-route="video" aria-label="The Evening Route Video file" />
+          <div class="preview" data-preview="video">No file chosen yet.</div>
+          <label class="reference">
+            <span>Filename, folder or short note</span>
+            <input type="text" data-text-field="video_reference" placeholder="Example: Photos / ACT-13 / window.jpg" />
+          </label>
+        </section>
+      </div>
+      <footer class="activity-meta">
+        <span>Routes: Note / Video</span>
+        <!-- Имена флагов безопасности — внутренняя лексика: CONSENT, NO_WAKE,
+             A2_ONLY ничего не говорят покупателю и не должны стоять на
+             странице, которую он открывает. То, что они означают, уже сказано
+             человеческими словами в KEEP SAFE каждой активности. -->
+      </footer>
+    </article>
+
+    <article class="activity" id="ACT-14" data-activity-id="ACT-14" data-routes="note,photo,audio">
+      <header class="activity-head">
+        <div class="eyebrow">14 / Patterns / save in Our Story</div>
+        <h2>The Water Ritual</h2>
+      </header>
+      <div class="copy-grid">
+        <section>
+          <h3>Notice</h3>
+          <p>Some water rituals are tiny: the bowl chosen over the fountain, the pause before drinking, the sound of a tongue in a quiet kitchen.</p>
+        </section>
+        <section>
+          <h3>Try This</h3>
+          <p>Record one existing water-related habit as a memory of the household. Note the place, sound or routine. Do not measure or interpret it.</p>
+        </section>
+        <section>
+          <h3>If Needed</h3>
+          <p>If water is not a visible ritual for your cat, skip this page or record another small household routine.</p>
+        </section>
+        <section class="safety">
+          <h3>Keep Safe</h3>
+          <p>Do not change water setup, track intake or treat this page as health information. A worrying change belongs with a veterinarian.</p>
+        </section>
+        <section>
+          <h3>Save It</h3>
+          <p>Save the note or ambient sound in Our Story or Sounds.</p>
+        </section>
+        <section>
+          <h3>If Today Is Quiet</h3>
+          <p>If the page feels too close to care tracking, skip it. There are many other pages.</p>
+        </section>
+      </div>
+      <div class="work-area">
+        <label class="text-entry">
+          <span>Your note</span>
+          <textarea data-text-field="note" rows="7" placeholder="Write what happened here."></textarea>
+        </label>
+        
+        <section class="slot" data-slot-route="photo">
+          <div class="slot-head">
+            <div>
+              <h3>Photo</h3>
+              <p>Choose a real photo from your device.</p>
+            </div>
+            <button type="button" data-remove-file="photo">Remove</button>
+          </div>
+          <input type="file" accept="image/*" data-file-route="photo" aria-label="The Water Ritual Photo file" />
+          <div class="preview" data-preview="photo">No file chosen yet.</div>
+          <label class="reference">
+            <span>Filename, folder or short note</span>
+            <input type="text" data-text-field="photo_reference" placeholder="Example: Photos / ACT-14 / window.jpg" />
+          </label>
+        </section>
+        <section class="slot" data-slot-route="audio">
+          <div class="slot-head">
+            <div>
+              <h3>Audio</h3>
+              <p>Choose a real sound or voice recording from your device.</p>
+            </div>
+            <button type="button" data-remove-file="audio">Remove</button>
+          </div>
+          <input type="file" accept="audio/*" data-file-route="audio" aria-label="The Water Ritual Audio file" />
+          <div class="preview" data-preview="audio">No file chosen yet.</div>
+          <label class="reference">
+            <span>Filename, folder or short note</span>
+            <input type="text" data-text-field="audio_reference" placeholder="Example: Photos / ACT-14 / window.jpg" />
+          </label>
+        </section>
+      </div>
+      <footer class="activity-meta">
+        <span>Routes: Note / Photo / Audio</span>
+        <!-- Имена флагов безопасности — внутренняя лексика: CONSENT, NO_WAKE,
+             A2_ONLY ничего не говорят покупателю и не должны стоять на
+             странице, которую он открывает. То, что они означают, уже сказано
+             человеческими словами в KEEP SAFE каждой активности. -->
+      </footer>
+    </article>
+
+    <article class="activity" id="ACT-15" data-activity-id="ACT-15" data-routes="photo,note">
+      <header class="activity-head">
+        <div class="eyebrow">15 / Nearness / save in Photos</div>
+        <h2>The Distance They Leave</h2>
+      </header>
+      <div class="copy-grid">
+        <section>
+          <h3>Notice</h3>
+          <p>Nearness has measurements that are not sentimental. One cushion away. Across the desk. At your feet. Close enough to know you are there, far enough to remain themselves.</p>
+        </section>
+        <section>
+          <h3>Try This</h3>
+          <p>When your cat settles near someone, record the distance they choose. Photograph it if that does not change the moment, or write it in plain words.</p>
+        </section>
+        <section>
+          <h3>If Needed</h3>
+          <p>If your cat prefers another room, record that pattern without making it mean rejection.</p>
+        </section>
+        <section class="safety">
+          <h3>Keep Safe</h3>
+          <p>Do not close the distance for the photo.</p>
+        </section>
+        <section>
+          <h3>Save It</h3>
+          <p>Save the photo or note in Photos or Our Story.</p>
+        </section>
+        <section>
+          <h3>If Today Is Quiet</h3>
+          <p>If they leave, the leaving is information. Let the page record the boundary.</p>
+        </section>
+      </div>
+      <div class="work-area">
+        <label class="text-entry">
+          <span>Your note</span>
+          <textarea data-text-field="note" rows="7" placeholder="Write what happened here."></textarea>
+        </label>
+        
+        <section class="slot" data-slot-route="photo">
+          <div class="slot-head">
+            <div>
+              <h3>Photo</h3>
+              <p>Choose a real photo from your device.</p>
+            </div>
+            <button type="button" data-remove-file="photo">Remove</button>
+          </div>
+          <input type="file" accept="image/*" data-file-route="photo" aria-label="The Distance They Leave Photo file" />
+          <div class="preview" data-preview="photo">No file chosen yet.</div>
+          <label class="reference">
+            <span>Filename, folder or short note</span>
+            <input type="text" data-text-field="photo_reference" placeholder="Example: Photos / ACT-15 / window.jpg" />
+          </label>
+        </section>
+      </div>
+      <footer class="activity-meta">
+        <span>Routes: Photo / Note</span>
+        <!-- Имена флагов безопасности — внутренняя лексика: CONSENT, NO_WAKE,
+             A2_ONLY ничего не говорят покупателю и не должны стоять на
+             странице, которую он открывает. То, что они означают, уже сказано
+             человеческими словами в KEEP SAFE каждой активности. -->
+      </footer>
+    </article>
+
+    <article class="activity" id="ACT-16" data-activity-id="ACT-16" data-routes="note,photo">
+      <header class="activity-head">
+        <div class="eyebrow">16 / Nearness / save in Our Story</div>
+        <h2>Near, Not Touching</h2>
+      </header>
+      <div class="copy-grid">
+        <section>
+          <h3>Notice</h3>
+          <p>Some cats keep company without making contact. They arrive, settle, listen, breathe, supervise and keep all touch on their own terms.</p>
+        </section>
+        <section>
+          <h3>Try This</h3>
+          <p>Notice one moment of being near without touching. Write what each of you was doing and how long the quiet lasted, roughly.</p>
+        </section>
+        <section>
+          <h3>If Needed</h3>
+          <p>This can happen in the same room, across a hallway or through a doorway.</p>
+        </section>
+        <section class="safety">
+          <h3>Keep Safe</h3>
+          <p>Do not invite touch to improve the page.</p>
+        </section>
+        <section>
+          <h3>Save It</h3>
+          <p>Save the note in Our Story.</p>
+        </section>
+        <section>
+          <h3>If Today Is Quiet</h3>
+          <p>If the moment ends when you notice it, write the ending. That is part of the rhythm.</p>
+        </section>
+      </div>
+      <div class="work-area">
+        <label class="text-entry">
+          <span>Your note</span>
+          <textarea data-text-field="note" rows="7" placeholder="Write what happened here."></textarea>
+        </label>
+        
+        <section class="slot" data-slot-route="photo">
+          <div class="slot-head">
+            <div>
+              <h3>Photo</h3>
+              <p>Choose a real photo from your device.</p>
+            </div>
+            <button type="button" data-remove-file="photo">Remove</button>
+          </div>
+          <input type="file" accept="image/*" data-file-route="photo" aria-label="Near, Not Touching Photo file" />
+          <div class="preview" data-preview="photo">No file chosen yet.</div>
+          <label class="reference">
+            <span>Filename, folder or short note</span>
+            <input type="text" data-text-field="photo_reference" placeholder="Example: Photos / ACT-16 / window.jpg" />
+          </label>
+        </section>
+      </div>
+      <footer class="activity-meta">
+        <span>Routes: Note / Photo</span>
+        <!-- Имена флагов безопасности — внутренняя лексика: CONSENT, NO_WAKE,
+             A2_ONLY ничего не говорят покупателю и не должны стоять на
+             странице, которую он открывает. То, что они означают, уже сказано
+             человеческими словами в KEEP SAFE каждой активности. -->
+      </footer>
+    </article>
+
+    <article class="activity" id="ACT-17" data-activity-id="ACT-17" data-routes="photo,note">
+      <header class="activity-head">
+        <div class="eyebrow">17 / Nearness / save in Photos</div>
+        <h2>The Chair They Share</h2>
+      </header>
+      <div class="copy-grid">
+        <section>
+          <h3>Notice</h3>
+          <p>Some furniture becomes a treaty. One chair, one side of the couch, one desk corner where human business and cat business overlap.</p>
+        </section>
+        <section>
+          <h3>Try This</h3>
+          <p>Record a place your cat chooses near a person. Write who is usually there, what the person is doing and what your cat seems to claim.</p>
+        </section>
+        <section>
+          <h3>If Needed</h3>
+          <p>If there is no shared chair, choose a shared room, rug or doorway.</p>
+        </section>
+        <section class="safety">
+          <h3>Keep Safe</h3>
+          <p>Shared means chosen. Do not place your cat there.</p>
+        </section>
+        <section>
+          <h3>Save It</h3>
+          <p>Save the photo and note in Photos or Our Story.</p>
+        </section>
+        <section>
+          <h3>If Today Is Quiet</h3>
+          <p>If the chair is empty, photograph the place and write what usually happens there.</p>
+        </section>
+      </div>
+      <div class="work-area">
+        <label class="text-entry">
+          <span>Your note</span>
+          <textarea data-text-field="note" rows="7" placeholder="Write what happened here."></textarea>
+        </label>
+        
+        <section class="slot" data-slot-route="photo">
+          <div class="slot-head">
+            <div>
+              <h3>Photo</h3>
+              <p>Choose a real photo from your device.</p>
+            </div>
+            <button type="button" data-remove-file="photo">Remove</button>
+          </div>
+          <input type="file" accept="image/*" data-file-route="photo" aria-label="The Chair They Share Photo file" />
+          <div class="preview" data-preview="photo">No file chosen yet.</div>
+          <label class="reference">
+            <span>Filename, folder or short note</span>
+            <input type="text" data-text-field="photo_reference" placeholder="Example: Photos / ACT-17 / window.jpg" />
+          </label>
+        </section>
+      </div>
+      <footer class="activity-meta">
+        <span>Routes: Photo / Note</span>
+        <!-- Имена флагов безопасности — внутренняя лексика: CONSENT, NO_WAKE,
+             A2_ONLY ничего не говорят покупателю и не должны стоять на
+             странице, которую он открывает. То, что они означают, уже сказано
+             человеческими словами в KEEP SAFE каждой активности. -->
+      </footer>
+    </article>
+
+    <article class="activity" id="ACT-18" data-activity-id="ACT-18" data-routes="note,video">
+      <header class="activity-head">
+        <div class="eyebrow">18 / Nearness / save in Our Story</div>
+        <h2>The Greeting They Offer</h2>
+      </header>
+      <div class="copy-grid">
+        <section>
+          <h3>Notice</h3>
+          <p>A greeting may be a sound, a tail, a glance, a walk past your legs, a solemn inspection of your shoes or absolutely no visible ceremony.</p>
+        </section>
+        <section>
+          <h3>Try This</h3>
+          <p>The next time you come home or enter a room, notice what your cat actually offers. Write it without upgrading it.</p>
+        </section>
+        <section>
+          <h3>If Needed</h3>
+          <p>If greetings are rare, record the first sign that they noticed you.</p>
+        </section>
+        <section class="safety">
+          <h3>Keep Safe</h3>
+          <p>Do not call repeatedly or create an entrance for the page.</p>
+        </section>
+        <section>
+          <h3>Save It</h3>
+          <p>Save the note or short video in Our Story or Videos.</p>
+        </section>
+        <section>
+          <h3>If Today Is Quiet</h3>
+          <p>If there is no greeting, record that honestly. Some cats keep arrivals small.</p>
+        </section>
+      </div>
+      <div class="work-area">
+        <label class="text-entry">
+          <span>Your note</span>
+          <textarea data-text-field="note" rows="7" placeholder="Write what happened here."></textarea>
+        </label>
+        
+        <section class="slot" data-slot-route="video">
+          <div class="slot-head">
+            <div>
+              <h3>Video</h3>
+              <p>Choose a short real video from your device.</p>
+            </div>
+            <button type="button" data-remove-file="video">Remove</button>
+          </div>
+          <input type="file" accept="video/*" data-file-route="video" aria-label="The Greeting They Offer Video file" />
+          <div class="preview" data-preview="video">No file chosen yet.</div>
+          <label class="reference">
+            <span>Filename, folder or short note</span>
+            <input type="text" data-text-field="video_reference" placeholder="Example: Photos / ACT-18 / window.jpg" />
+          </label>
+        </section>
+      </div>
+      <footer class="activity-meta">
+        <span>Routes: Note / Video</span>
+        <!-- Имена флагов безопасности — внутренняя лексика: CONSENT, NO_WAKE,
+             A2_ONLY ничего не говорят покупателю и не должны стоять на
+             странице, которую он открывает. То, что они означают, уже сказано
+             человеческими словами в KEEP SAFE каждой активности. -->
+      </footer>
+    </article>
+
+    <article class="activity" id="ACT-19" data-activity-id="ACT-19" data-routes="note,audio">
+      <header class="activity-head">
+        <div class="eyebrow">19 / Nearness / save in Sounds</div>
+        <h2>A Word That Works Here</h2>
+      </header>
+      <div class="copy-grid">
+        <section>
+          <h3>Notice</h3>
+          <p>A home can grow a small language around a cat. Not a universal translation. Just a word, a sound, a name or a tone that belongs here.</p>
+        </section>
+        <section>
+          <h3>Try This</h3>
+          <p>Choose one word or sound you actually use with your cat. Write when you use it and what usually happens around it. If it is natural to record your own voice, keep it short.</p>
+        </section>
+        <section>
+          <h3>If Needed</h3>
+          <p>If your cat does not respond, the word can still belong to the home. This is not a test.</p>
+        </section>
+        <section class="safety">
+          <h3>Keep Safe</h3>
+          <p>Do not provoke a response. If this becomes handwriting or audio shown as personal history, it must be real.</p>
+        </section>
+        <section>
+          <h3>Save It</h3>
+          <p>Save the note or voice memo in Sounds or Our Story.</p>
+        </section>
+        <section>
+          <h3>If Today Is Quiet</h3>
+          <p>If no word comes to mind, list one nickname instead.</p>
+        </section>
+      </div>
+      <div class="work-area">
+        <label class="text-entry">
+          <span>Your note</span>
+          <textarea data-text-field="note" rows="7" placeholder="Write what happened here."></textarea>
+        </label>
+        
+        <section class="slot" data-slot-route="audio">
+          <div class="slot-head">
+            <div>
+              <h3>Audio</h3>
+              <p>Choose a real sound or voice recording from your device.</p>
+            </div>
+            <button type="button" data-remove-file="audio">Remove</button>
+          </div>
+          <input type="file" accept="audio/*" data-file-route="audio" aria-label="A Word That Works Here Audio file" />
+          <div class="preview" data-preview="audio">No file chosen yet.</div>
+          <label class="reference">
+            <span>Filename, folder or short note</span>
+            <input type="text" data-text-field="audio_reference" placeholder="Example: Photos / ACT-19 / window.jpg" />
+          </label>
+        </section>
+      </div>
+      <footer class="activity-meta">
+        <span>Routes: Note / Audio</span>
+        <!-- Имена флагов безопасности — внутренняя лексика: CONSENT, NO_WAKE,
+             A2_ONLY ничего не говорят покупателю и не должны стоять на
+             странице, которую он открывает. То, что они означают, уже сказано
+             человеческими словами в KEEP SAFE каждой активности. -->
+      </footer>
+    </article>
+
+    <article class="activity" id="ACT-20" data-activity-id="ACT-20" data-routes="note">
+      <header class="activity-head">
+        <div class="eyebrow">20 / Nearness / save in Our Story</div>
+        <h2>The Look You Know</h2>
+      </header>
+      <div class="copy-grid">
+        <section>
+          <h3>Notice</h3>
+          <p>You may know a look that would be hard to explain to anyone else. The hallway look. The move-your-book look. The look from the chair that has already made a decision.</p>
+        </section>
+        <section>
+          <h3>Try This</h3>
+          <p>Describe one familiar look, posture or pause in context. What was happening? Where were they? What did you learn from living with this cat, not from a chart?</p>
+        </section>
+        <section>
+          <h3>If Needed</h3>
+          <p>If visual cues are subtle or your cat is blind, deaf or older, describe another signal: position, timing, sound or route.</p>
+        </section>
+        <section class="safety">
+          <h3>Keep Safe</h3>
+          <p>Do not turn the signal into a universal rule or a medical conclusion.</p>
+        </section>
+        <section>
+          <h3>Save It</h3>
+          <p>Save the written note in Our Story.</p>
+        </section>
+        <section>
+          <h3>If Today Is Quiet</h3>
+          <p>If you cannot name the look, describe the situation where you usually recognize it.</p>
+        </section>
+      </div>
+      <div class="work-area">
+        <label class="text-entry">
+          <span>Your note</span>
+          <textarea data-text-field="note" rows="7" placeholder="Write what happened here."></textarea>
+        </label>
+        
+      </div>
+      <footer class="activity-meta">
+        <span>Routes: Note</span>
+        <!-- Имена флагов безопасности — внутренняя лексика: CONSENT, NO_WAKE,
+             A2_ONLY ничего не говорят покупателю и не должны стоять на
+             странице, которую он открывает. То, что они означают, уже сказано
+             человеческими словами в KEEP SAFE каждой активности. -->
+      </footer>
+    </article>
+
+    <article class="activity" id="ACT-21" data-activity-id="ACT-21" data-routes="note">
+      <header class="activity-head">
+        <div class="eyebrow">21 / Nearness / save in Our Story</div>
+        <h2>When They Walk Away</h2>
+      </header>
+      <div class="copy-grid">
+        <section>
+          <h3>Notice</h3>
+          <p>A cat walking away can be a complete answer. It can mean not now, not that, not there or simply that they are done.</p>
+        </section>
+        <section>
+          <h3>Try This</h3>
+          <p>Notice one moment when your cat ends an interaction or leaves a place. Write what happened just before and where they went next, if you know.</p>
+        </section>
+        <section>
+          <h3>If Needed</h3>
+          <p>This page can matter even for an affectionate cat. Boundaries are part of the record.</p>
+        </section>
+        <section class="safety">
+          <h3>Keep Safe</h3>
+          <p>Do not follow to continue the interaction.</p>
+        </section>
+        <section>
+          <h3>Save It</h3>
+          <p>Save the note in Our Story.</p>
+        </section>
+        <section>
+          <h3>If Today Is Quiet</h3>
+          <p>If you do not catch a walk-away, write one boundary you already know and respect.</p>
+        </section>
+      </div>
+      <div class="work-area">
+        <label class="text-entry">
+          <span>Your note</span>
+          <textarea data-text-field="note" rows="7" placeholder="Write what happened here."></textarea>
+        </label>
+        
+      </div>
+      <footer class="activity-meta">
+        <span>Routes: Note</span>
+        <!-- Имена флагов безопасности — внутренняя лексика: CONSENT, NO_WAKE,
+             A2_ONLY ничего не говорят покупателю и не должны стоять на
+             странице, которую он открывает. То, что они означают, уже сказано
+             человеческими словами в KEEP SAFE каждой активности. -->
+      </footer>
+    </article>
+
+    <article class="activity" id="ACT-22" data-activity-id="ACT-22" data-routes="note,photo">
+      <header class="activity-head">
+        <div class="eyebrow">22 / Nearness / save in Our Story</div>
+        <h2>The Person They Choose</h2>
+      </header>
+      <div class="copy-grid">
+        <section>
+          <h3>Notice</h3>
+          <p>In a household, a cat may choose people by task, temperature, patience, lap shape, voice, shared history or reasons known only to the cat.</p>
+        </section>
+        <section>
+          <h3>Try This</h3>
+          <p>Record one ordinary moment of chosen company. Who did your cat approach, sit near, watch or avoid? What was the person doing?</p>
+        </section>
+        <section>
+          <h3>If Needed</h3>
+          <p>In a one-person home, notice which version of you they choose: working, reading, cooking, resting, trying to leave.</p>
+        </section>
+        <section class="safety">
+          <h3>Keep Safe</h3>
+          <p>Do not make people compete for attention.</p>
+        </section>
+        <section>
+          <h3>Save It</h3>
+          <p>Save the note or photo in Our Story or Photos.</p>
+        </section>
+        <section>
+          <h3>If Today Is Quiet</h3>
+          <p>If your cat chooses no one today, record the place they chose instead.</p>
+        </section>
+      </div>
+      <div class="work-area">
+        <label class="text-entry">
+          <span>Your note</span>
+          <textarea data-text-field="note" rows="7" placeholder="Write what happened here."></textarea>
+        </label>
+        
+        <section class="slot" data-slot-route="photo">
+          <div class="slot-head">
+            <div>
+              <h3>Photo</h3>
+              <p>Choose a real photo from your device.</p>
+            </div>
+            <button type="button" data-remove-file="photo">Remove</button>
+          </div>
+          <input type="file" accept="image/*" data-file-route="photo" aria-label="The Person They Choose Photo file" />
+          <div class="preview" data-preview="photo">No file chosen yet.</div>
+          <label class="reference">
+            <span>Filename, folder or short note</span>
+            <input type="text" data-text-field="photo_reference" placeholder="Example: Photos / ACT-22 / window.jpg" />
+          </label>
+        </section>
+      </div>
+      <footer class="activity-meta">
+        <span>Routes: Note / Photo</span>
+        <!-- Имена флагов безопасности — внутренняя лексика: CONSENT, NO_WAKE,
+             A2_ONLY ничего не говорят покупателю и не должны стоять на
+             странице, которую он открывает. То, что они означают, уже сказано
+             человеческими словами в KEEP SAFE каждой активности. -->
+      </footer>
+    </article>
+
+    <article class="activity" id="ACT-23" data-activity-id="ACT-23" data-routes="audio,note">
+      <header class="activity-head">
+        <div class="eyebrow">23 / Traces / save in Sounds</div>
+        <h2>The Sound of Arrival</h2>
+      </header>
+      <div class="copy-grid">
+        <section>
+          <h3>Notice</h3>
+          <p>Some arrivals are heard before they are seen: feet on wood, a soft landing, a trill from the hallway, the small weight of a body entering the room.</p>
+        </section>
+        <section>
+          <h3>Try This</h3>
+          <p>When an arrival sound happens naturally, record a few seconds from a respectful distance. Keep the room as it is.</p>
+        </section>
+        <section>
+          <h3>If Needed</h3>
+          <p>If recording changes the moment, write the sound in words instead.</p>
+        </section>
+        <section class="safety">
+          <h3>Keep Safe</h3>
+          <p>Do not provoke sound or bring the device close to your cat.</p>
+        </section>
+        <section>
+          <h3>Save It</h3>
+          <p>Save the audio or note in Sounds.</p>
+        </section>
+        <section>
+          <h3>If Today Is Quiet</h3>
+          <p>If the house stays quiet, record another arrival later. Silence is not a failed page.</p>
+        </section>
+      </div>
+      <div class="work-area">
+        <label class="text-entry">
+          <span>Your note</span>
+          <textarea data-text-field="note" rows="7" placeholder="Write what happened here."></textarea>
+        </label>
+        
+        <section class="slot" data-slot-route="audio">
+          <div class="slot-head">
+            <div>
+              <h3>Audio</h3>
+              <p>Choose a real sound or voice recording from your device.</p>
+            </div>
+            <button type="button" data-remove-file="audio">Remove</button>
+          </div>
+          <input type="file" accept="audio/*" data-file-route="audio" aria-label="The Sound of Arrival Audio file" />
+          <div class="preview" data-preview="audio">No file chosen yet.</div>
+          <label class="reference">
+            <span>Filename, folder or short note</span>
+            <input type="text" data-text-field="audio_reference" placeholder="Example: Photos / ACT-23 / window.jpg" />
+          </label>
+        </section>
+      </div>
+      <footer class="activity-meta">
+        <span>Routes: Audio / Note</span>
+        <!-- Имена флагов безопасности — внутренняя лексика: CONSENT, NO_WAKE,
+             A2_ONLY ничего не говорят покупателю и не должны стоять на
+             странице, которую он открывает. То, что они означают, уже сказано
+             человеческими словами в KEEP SAFE каждой активности. -->
+      </footer>
+    </article>
+
+    <article class="activity" id="ACT-24" data-activity-id="ACT-24" data-routes="video,note,photo">
+      <header class="activity-head">
+        <div class="eyebrow">24 / Traces / save in Videos</div>
+        <h2>Before the Jump</h2>
+      </header>
+      <div class="copy-grid">
+        <section>
+          <h3>Notice</h3>
+          <p>Before a jump, there is often a small calculation. Feet gather. Eyes measure. The whole body becomes a question with an answer already forming.</p>
+        </section>
+        <section>
+          <h3>Try This</h3>
+          <p>If you naturally see that pause before an ordinary safe movement, save it with a short video or a note. The pause matters as much as the jump.</p>
+        </section>
+        <section>
+          <h3>If Needed</h3>
+          <p>For a cat who does not jump, use any before-movement moment: standing, stretching, turning, deciding.</p>
+        </section>
+        <section class="safety">
+          <h3>Keep Safe</h3>
+          <p>Do not lure, repeat or create a risky jump.</p>
+        </section>
+        <section>
+          <h3>Save It</h3>
+          <p>Save the video or note in Videos or Our Story.</p>
+        </section>
+        <section>
+          <h3>If Today Is Quiet</h3>
+          <p>If you miss the pause, write what movement you know by heart.</p>
+        </section>
+      </div>
+      <div class="work-area">
+        <label class="text-entry">
+          <span>Your note</span>
+          <textarea data-text-field="note" rows="7" placeholder="Write what happened here."></textarea>
+        </label>
+        
+        <section class="slot" data-slot-route="photo">
+          <div class="slot-head">
+            <div>
+              <h3>Photo</h3>
+              <p>Choose a real photo from your device.</p>
+            </div>
+            <button type="button" data-remove-file="photo">Remove</button>
+          </div>
+          <input type="file" accept="image/*" data-file-route="photo" aria-label="Before the Jump Photo file" />
+          <div class="preview" data-preview="photo">No file chosen yet.</div>
+          <label class="reference">
+            <span>Filename, folder or short note</span>
+            <input type="text" data-text-field="photo_reference" placeholder="Example: Photos / ACT-24 / window.jpg" />
+          </label>
+        </section>
+        <section class="slot" data-slot-route="video">
+          <div class="slot-head">
+            <div>
+              <h3>Video</h3>
+              <p>Choose a short real video from your device.</p>
+            </div>
+            <button type="button" data-remove-file="video">Remove</button>
+          </div>
+          <input type="file" accept="video/*" data-file-route="video" aria-label="Before the Jump Video file" />
+          <div class="preview" data-preview="video">No file chosen yet.</div>
+          <label class="reference">
+            <span>Filename, folder or short note</span>
+            <input type="text" data-text-field="video_reference" placeholder="Example: Photos / ACT-24 / window.jpg" />
+          </label>
+        </section>
+      </div>
+      <footer class="activity-meta">
+        <span>Routes: Video / Note / Photo</span>
+        <!-- Имена флагов безопасности — внутренняя лексика: CONSENT, NO_WAKE,
+             A2_ONLY ничего не говорят покупателю и не должны стоять на
+             странице, которую он открывает. То, что они означают, уже сказано
+             человеческими словами в KEEP SAFE каждой активности. -->
+      </footer>
+    </article>
+
+    <article class="activity" id="ACT-25" data-activity-id="ACT-25" data-routes="video,note">
+      <header class="activity-head">
+        <div class="eyebrow">25 / Traces / save in Videos</div>
+        <h2>One Minute of a Usual Movement</h2>
+      </header>
+      <div class="copy-grid">
+        <section>
+          <h3>Notice</h3>
+          <p>A still photo can miss the way your cat moves through a room. The pace, the curve, the hesitation, the tiny shoulder work of being themselves.</p>
+        </section>
+        <section>
+          <h3>Try This</h3>
+          <p>Make a short video of one usual movement. A route, stretch, scratch, turn, climb down or walk across the room is enough.</p>
+        </section>
+        <section>
+          <h3>If Needed</h3>
+          <p>Ten seconds is enough. For a low-mobility cat, record settling, stretching, turning their head or the small shift into comfort.</p>
+        </section>
+        <section class="safety">
+          <h3>Keep Safe</h3>
+          <p>Stop if filming changes the behavior.</p>
+        </section>
+        <section>
+          <h3>Save It</h3>
+          <p>Save the video in Videos.</p>
+        </section>
+        <section>
+          <h3>If Today Is Quiet</h3>
+          <p>If you do not want to film, describe the movement in five plain details.</p>
+        </section>
+      </div>
+      <div class="work-area">
+        <label class="text-entry">
+          <span>Your note</span>
+          <textarea data-text-field="note" rows="7" placeholder="Write what happened here."></textarea>
+        </label>
+        
+        <section class="slot" data-slot-route="video">
+          <div class="slot-head">
+            <div>
+              <h3>Video</h3>
+              <p>Choose a short real video from your device.</p>
+            </div>
+            <button type="button" data-remove-file="video">Remove</button>
+          </div>
+          <input type="file" accept="video/*" data-file-route="video" aria-label="One Minute of a Usual Movement Video file" />
+          <div class="preview" data-preview="video">No file chosen yet.</div>
+          <label class="reference">
+            <span>Filename, folder or short note</span>
+            <input type="text" data-text-field="video_reference" placeholder="Example: Photos / ACT-25 / window.jpg" />
+          </label>
+        </section>
+      </div>
+      <footer class="activity-meta">
+        <span>Routes: Video / Note</span>
+        <!-- Имена флагов безопасности — внутренняя лексика: CONSENT, NO_WAKE,
+             A2_ONLY ничего не говорят покупателю и не должны стоять на
+             странице, которую он открывает. То, что они означают, уже сказано
+             человеческими словами в KEEP SAFE каждой активности. -->
+      </footer>
+    </article>
+
+    <article class="activity" id="ACT-26" data-activity-id="ACT-26" data-routes="photo,note">
+      <header class="activity-head">
+        <div class="eyebrow">26 / Traces / save in Photos</div>
+        <h2>Their Chosen Object</h2>
+      </header>
+      <div class="copy-grid">
+        <section>
+          <h3>Notice</h3>
+          <p>Some objects become important without permission: the flattened box, the blanket corner, the toy that looks finished but apparently is not, the carrier they use as furniture.</p>
+        </section>
+        <section>
+          <h3>Try This</h3>
+          <p>Photograph one object your cat chooses again and again. Write what they do with it and how long it has been part of the house.</p>
+        </section>
+        <section>
+          <h3>If Needed</h3>
+          <p>If the object is not photogenic, leave it honest. This is evidence, not product styling.</p>
+        </section>
+        <section class="safety">
+          <h3>Keep Safe</h3>
+          <p>Confirm the object is safe. Do not leave strings, ribbons or small loose parts unattended.</p>
+        </section>
+        <section>
+          <h3>Save It</h3>
+          <p>Save the photo and note in Photos or Our Story.</p>
+        </section>
+        <section>
+          <h3>If Today Is Quiet</h3>
+          <p>If they choose a different object today, follow the choice.</p>
+        </section>
+      </div>
+      <div class="work-area">
+        <label class="text-entry">
+          <span>Your note</span>
+          <textarea data-text-field="note" rows="7" placeholder="Write what happened here."></textarea>
+        </label>
+        
+        <section class="slot" data-slot-route="photo">
+          <div class="slot-head">
+            <div>
+              <h3>Photo</h3>
+              <p>Choose a real photo from your device.</p>
+            </div>
+            <button type="button" data-remove-file="photo">Remove</button>
+          </div>
+          <input type="file" accept="image/*" data-file-route="photo" aria-label="Their Chosen Object Photo file" />
+          <div class="preview" data-preview="photo">No file chosen yet.</div>
+          <label class="reference">
+            <span>Filename, folder or short note</span>
+            <input type="text" data-text-field="photo_reference" placeholder="Example: Photos / ACT-26 / window.jpg" />
+          </label>
+        </section>
+      </div>
+      <footer class="activity-meta">
+        <span>Routes: Photo / Note</span>
+        <!-- Имена флагов безопасности — внутренняя лексика: CONSENT, NO_WAKE,
+             A2_ONLY ничего не говорят покупателю и не должны стоять на
+             странице, которую он открывает. То, что они означают, уже сказано
+             человеческими словами в KEEP SAFE каждой активности. -->
+      </footer>
+    </article>
+
+    <article class="activity" id="ACT-27" data-activity-id="ACT-27" data-routes="note,audio">
+      <header class="activity-head">
+        <div class="eyebrow">27 / Traces / save in Our Story</div>
+        <h2>The Names Used in This House</h2>
+      </header>
+      <div class="copy-grid">
+        <section>
+          <h3>Notice</h3>
+          <p>A cat may have one official name and twelve household names with no official use. Some are dignified. Some are not. The archive should be honest about both.</p>
+        </section>
+        <section>
+          <h3>Try This</h3>
+          <p>Write the names, nicknames and small phrases you actually use. Add who says them, when they appear and which one feels most like this home.</p>
+        </section>
+        <section>
+          <h3>If Needed</h3>
+          <p>If there are many, choose the ones that would be hardest to reconstruct later.</p>
+        </section>
+        <section class="safety">
+          <h3>Keep Safe</h3>
+          <p>If you include handwriting, it must be real handwriting used with permission. Do not generate it.</p>
+        </section>
+        <section>
+          <h3>Save It</h3>
+          <p>Save the list or voice note in Our Story or Sounds.</p>
+        </section>
+        <section>
+          <h3>If Today Is Quiet</h3>
+          <p>If your cat has one name only, write the way it sounds when someone here says it.</p>
+        </section>
+      </div>
+      <div class="work-area">
+        <label class="text-entry">
+          <span>Your note</span>
+          <textarea data-text-field="note" rows="7" placeholder="Write what happened here."></textarea>
+        </label>
+        
+        <section class="slot" data-slot-route="audio">
+          <div class="slot-head">
+            <div>
+              <h3>Audio</h3>
+              <p>Choose a real sound or voice recording from your device.</p>
+            </div>
+            <button type="button" data-remove-file="audio">Remove</button>
+          </div>
+          <input type="file" accept="audio/*" data-file-route="audio" aria-label="The Names Used in This House Audio file" />
+          <div class="preview" data-preview="audio">No file chosen yet.</div>
+          <label class="reference">
+            <span>Filename, folder or short note</span>
+            <input type="text" data-text-field="audio_reference" placeholder="Example: Photos / ACT-27 / window.jpg" />
+          </label>
+        </section>
+      </div>
+      <footer class="activity-meta">
+        <span>Routes: Note / Audio</span>
+        <!-- Имена флагов безопасности — внутренняя лексика: CONSENT, NO_WAKE,
+             A2_ONLY ничего не говорят покупателю и не должны стоять на
+             странице, которую он открывает. То, что они означают, уже сказано
+             человеческими словами в KEEP SAFE каждой активности. -->
+      </footer>
+    </article>
+
+    <article class="activity" id="ACT-28" data-activity-id="ACT-28" data-routes="photo,note">
+      <header class="activity-head">
+        <div class="eyebrow">28 / Traces / save in Photos</div>
+        <h2>A Photo From Their Level</h2>
+      </header>
+      <div class="copy-grid">
+        <section>
+          <h3>Notice</h3>
+          <p>The room changes when the camera gets low. Chair legs become architecture. Blankets become hills. A doorway becomes a frame you may never have noticed from standing height.</p>
+        </section>
+        <section>
+          <h3>Try This</h3>
+          <p>Take one photo from a low angle near a place your cat uses. You are photographing the room, not your cat&#39;s face.</p>
+        </section>
+        <section>
+          <h3>If Needed</h3>
+          <p>If getting low is difficult, place the phone safely on a low surface and use a timer.</p>
+        </section>
+        <section class="safety">
+          <h3>Keep Safe</h3>
+          <p>Do not push the camera into your cat&#39;s face or into a refuge.</p>
+        </section>
+        <section>
+          <h3>Save It</h3>
+          <p>Save the photo in Photos or Places.</p>
+        </section>
+        <section>
+          <h3>If Today Is Quiet</h3>
+          <p>If no photo works, write three things that look different from their level.</p>
+        </section>
+      </div>
+      <div class="work-area">
+        <label class="text-entry">
+          <span>Your note</span>
+          <textarea data-text-field="note" rows="7" placeholder="Write what happened here."></textarea>
+        </label>
+        
+        <section class="slot" data-slot-route="photo">
+          <div class="slot-head">
+            <div>
+              <h3>Photo</h3>
+              <p>Choose a real photo from your device.</p>
+            </div>
+            <button type="button" data-remove-file="photo">Remove</button>
+          </div>
+          <input type="file" accept="image/*" data-file-route="photo" aria-label="A Photo From Their Level Photo file" />
+          <div class="preview" data-preview="photo">No file chosen yet.</div>
+          <label class="reference">
+            <span>Filename, folder or short note</span>
+            <input type="text" data-text-field="photo_reference" placeholder="Example: Photos / ACT-28 / window.jpg" />
+          </label>
+        </section>
+      </div>
+      <footer class="activity-meta">
+        <span>Routes: Photo / Note</span>
+        <!-- Имена флагов безопасности — внутренняя лексика: CONSENT, NO_WAKE,
+             A2_ONLY ничего не говорят покупателю и не должны стоять на
+             странице, которую он открывает. То, что они означают, уже сказано
+             человеческими словами в KEEP SAFE каждой активности. -->
+      </footer>
+    </article>
+
+    <article class="activity" id="ACT-29" data-activity-id="ACT-29" data-routes="audio,note">
+      <header class="activity-head">
+        <div class="eyebrow">29 / Traces / save in Sounds</div>
+        <h2>The Soundtrack of the Room</h2>
+      </header>
+      <div class="copy-grid">
+        <section>
+          <h3>Notice</h3>
+          <p>A home has background sounds you may stop hearing because they are always there: rain on glass, the heater, a keyboard, a bowl moved across the floor, the quiet hum of the room where your cat rests.</p>
+        </section>
+        <section>
+          <h3>Try This</h3>
+          <p>Record thirty seconds of a room your cat uses while nothing special is happening. Let the sound be as plain as it is.</p>
+        </section>
+        <section>
+          <h3>If Needed</h3>
+          <p>If recording audio feels awkward, write the sound list instead.</p>
+        </section>
+        <section class="safety">
+          <h3>Keep Safe</h3>
+          <p>Do not add sounds, alarms, music, toys or tests to make the recording more interesting.</p>
+        </section>
+        <section>
+          <h3>Save It</h3>
+          <p>Save the audio or list in Sounds.</p>
+        </section>
+        <section>
+          <h3>If Today Is Quiet</h3>
+          <p>If the room is silent, record the silence or the reason it feels silent.</p>
+        </section>
+      </div>
+      <div class="work-area">
+        <label class="text-entry">
+          <span>Your note</span>
+          <textarea data-text-field="note" rows="7" placeholder="Write what happened here."></textarea>
+        </label>
+        
+        <section class="slot" data-slot-route="audio">
+          <div class="slot-head">
+            <div>
+              <h3>Audio</h3>
+              <p>Choose a real sound or voice recording from your device.</p>
+            </div>
+            <button type="button" data-remove-file="audio">Remove</button>
+          </div>
+          <input type="file" accept="audio/*" data-file-route="audio" aria-label="The Soundtrack of the Room Audio file" />
+          <div class="preview" data-preview="audio">No file chosen yet.</div>
+          <label class="reference">
+            <span>Filename, folder or short note</span>
+            <input type="text" data-text-field="audio_reference" placeholder="Example: Photos / ACT-29 / window.jpg" />
+          </label>
+        </section>
+      </div>
+      <footer class="activity-meta">
+        <span>Routes: Audio / Note</span>
+        <!-- Имена флагов безопасности — внутренняя лексика: CONSENT, NO_WAKE,
+             A2_ONLY ничего не говорят покупателю и не должны стоять на
+             странице, которую он открывает. То, что они означают, уже сказано
+             человеческими словами в KEEP SAFE каждой активности. -->
+      </footer>
+    </article>
+
+    <article class="activity" id="ACT-30" data-activity-id="ACT-30" data-routes="physical_trace,photo,note">
+      <header class="activity-head">
+        <div class="eyebrow">30 / Traces / save in Keepsakes</div>
+        <h2>The Natural Keepsake</h2>
+      </header>
+      <div class="copy-grid">
+        <section>
+          <h3>Notice</h3>
+          <p>Sometimes the house offers a small physical trace without asking anyone to make one: a naturally shed whisker, a tuft of fur on a blanket, the worn corner of an object already loved into shape.</p>
+        </section>
+        <section>
+          <h3>Try This</h3>
+          <p>If you naturally find a trace, photograph it or write where it was found. You may keep it physically if that feels right and safe.</p>
+        </section>
+        <section>
+          <h3>If Needed</h3>
+          <p>If you never keep physical items, a photo and a note are enough.</p>
+        </section>
+        <section class="safety">
+          <h3>Keep Safe</h3>
+          <p>Never pull, cut or extract fur or whiskers. Use only what is naturally found.</p>
+        </section>
+        <section>
+          <h3>Save It</h3>
+          <p>Save the photo in Photos and store any physical item separately in Keepsakes.</p>
+        </section>
+        <section>
+          <h3>If Today Is Quiet</h3>
+          <p>If there is no trace, skip the page. Nothing needs to be manufactured.</p>
+        </section>
+      </div>
+      <div class="work-area">
+        <label class="text-entry">
+          <span>Your note</span>
+          <textarea data-text-field="note" rows="7" placeholder="Write what happened here."></textarea>
+        </label>
+        
+        <section class="slot" data-slot-route="photo">
+          <div class="slot-head">
+            <div>
+              <h3>Photo</h3>
+              <p>Choose a real photo from your device.</p>
+            </div>
+            <button type="button" data-remove-file="photo">Remove</button>
+          </div>
+          <input type="file" accept="image/*" data-file-route="photo" aria-label="The Natural Keepsake Photo file" />
+          <div class="preview" data-preview="photo">No file chosen yet.</div>
+          <label class="reference">
+            <span>Filename, folder or short note</span>
+            <input type="text" data-text-field="photo_reference" placeholder="Example: Photos / ACT-30 / window.jpg" />
+          </label>
+        </section>
+        <section class="slot" data-slot-route="physical_trace">
+          <div class="slot-head">
+            <div>
+              <h3>Physical keepsake</h3>
+              <p>Attach a photo or reference for the keepsake. Keep the object separately.</p>
+            </div>
+            <button type="button" data-remove-file="physical_trace">Remove</button>
+          </div>
+          <input type="file" accept="image/*,.pdf" data-file-route="physical_trace" aria-label="The Natural Keepsake Physical keepsake file" />
+          <div class="preview" data-preview="physical_trace">No file chosen yet.</div>
+          <label class="reference">
+            <span>Filename, folder or short note</span>
+            <input type="text" data-text-field="physical_trace_reference" placeholder="Example: Photos / ACT-30 / window.jpg" />
+          </label>
+        </section>
+      </div>
+      <footer class="activity-meta">
+        <span>Routes: Physical keepsake / Photo / Note</span>
+        <!-- Имена флагов безопасности — внутренняя лексика: CONSENT, NO_WAKE,
+             A2_ONLY ничего не говорят покупателю и не должны стоять на
+             странице, которую он открывает. То, что они означают, уже сказано
+             человеческими словами в KEEP SAFE каждой активности. -->
+      </footer>
+    </article>
+
+    <article class="activity" id="ACT-31" data-activity-id="ACT-31" data-routes="day_record,note,photo,audio,video">
+      <header class="activity-head">
+        <div class="eyebrow">31 / One Day in This House / save in One Day</div>
+        <h2>One Day in This House</h2>
+      </header>
+      <div class="copy-grid">
+        <section>
+          <h3>Notice</h3>
+          <p>Choose one day only because you are already living it. Not a perfect day. Not a last day. Not a day arranged around your cat. Just a day in this house while your cat is here.</p>
+        </section>
+        <section>
+          <h3>Try This</h3>
+          <p>Across the day, save a few details that happen on their own: one place, one sound, one route, one distance, one object, one sentence. Use any mix that fits.</p>
+        </section>
+        <section>
+          <h3>If Needed</h3>
+          <p>If the day is too busy, collect one detail. If your cat spends the day resting, record the resting place and the room around it.</p>
+        </section>
+        <section class="safety">
+          <h3>Keep Safe</h3>
+          <p>Do not use a timer, wake your cat, stage a scene or require a certain number of files.</p>
+        </section>
+        <section>
+          <h3>Save It</h3>
+          <p>Save the day&#39;s notes and files in One Day.</p>
+        </section>
+        <section>
+          <h3>If Today Is Quiet</h3>
+          <p>If the day produces almost nothing, write one line: This was the day we had.</p>
+        </section>
+      </div>
+      <div class="work-area">
+        <label class="text-entry">
+          <span>Your note</span>
+          <textarea data-text-field="note" rows="7" placeholder="Write what happened here."></textarea>
+        </label>
+        
+        <section class="slot" data-slot-route="photo">
+          <div class="slot-head">
+            <div>
+              <h3>Photo</h3>
+              <p>Choose a real photo from your device.</p>
+            </div>
+            <button type="button" data-remove-file="photo">Remove</button>
+          </div>
+          <input type="file" accept="image/*" data-file-route="photo" aria-label="One Day in This House Photo file" />
+          <div class="preview" data-preview="photo">No file chosen yet.</div>
+          <label class="reference">
+            <span>Filename, folder or short note</span>
+            <input type="text" data-text-field="photo_reference" placeholder="Example: Photos / ACT-31 / window.jpg" />
+          </label>
+        </section>
+        <section class="slot" data-slot-route="video">
+          <div class="slot-head">
+            <div>
+              <h3>Video</h3>
+              <p>Choose a short real video from your device.</p>
+            </div>
+            <button type="button" data-remove-file="video">Remove</button>
+          </div>
+          <input type="file" accept="video/*" data-file-route="video" aria-label="One Day in This House Video file" />
+          <div class="preview" data-preview="video">No file chosen yet.</div>
+          <label class="reference">
+            <span>Filename, folder or short note</span>
+            <input type="text" data-text-field="video_reference" placeholder="Example: Photos / ACT-31 / window.jpg" />
+          </label>
+        </section>
+        <section class="slot" data-slot-route="audio">
+          <div class="slot-head">
+            <div>
+              <h3>Audio</h3>
+              <p>Choose a real sound or voice recording from your device.</p>
+            </div>
+            <button type="button" data-remove-file="audio">Remove</button>
+          </div>
+          <input type="file" accept="audio/*" data-file-route="audio" aria-label="One Day in This House Audio file" />
+          <div class="preview" data-preview="audio">No file chosen yet.</div>
+          <label class="reference">
+            <span>Filename, folder or short note</span>
+            <input type="text" data-text-field="audio_reference" placeholder="Example: Photos / ACT-31 / window.jpg" />
+          </label>
+        </section>
+        <section class="slot" data-slot-route="day_record">
+          <div class="slot-head">
+            <div>
+              <h3>One-day record</h3>
+              <p>Attach any one-day file that belongs with this page.</p>
+            </div>
+            <button type="button" data-remove-file="day_record">Remove</button>
+          </div>
+          <input type="file" accept="image/*,video/*,audio/*,.pdf" data-file-route="day_record" aria-label="One Day in This House One-day record file" />
+          <div class="preview" data-preview="day_record">No file chosen yet.</div>
+          <label class="reference">
+            <span>Filename, folder or short note</span>
+            <input type="text" data-text-field="day_record_reference" placeholder="Example: Photos / ACT-31 / window.jpg" />
+          </label>
+        </section>
+      </div>
+      <footer class="activity-meta">
+        <span>Routes: One-day record / Note / Photo / Audio / Video</span>
+        <!-- Имена флагов безопасности — внутренняя лексика: CONSENT, NO_WAKE,
+             A2_ONLY ничего не говорят покупателю и не должны стоять на
+             странице, которую он открывает. То, что они означают, уже сказано
+             человеческими словами в KEEP SAFE каждой активности. -->
+      </footer>
+    </article>
+  </main>
+
+  <script type="application/json" id="activityData">[{"id":"ACT-01","number":1,"title":"A Map of Their Routes","section_id":"places","archive_destination":"Places","routes":["map","note","photo"]},{"id":"ACT-02","number":2,"title":"The First Place in the Morning","section_id":"places","archive_destination":"Places","routes":["note","photo"]},{"id":"ACT-03","number":3,"title":"The Window They Choose","section_id":"places","archive_destination":"Places","routes":["photo","note"]},{"id":"ACT-04","number":4,"title":"The Doorway Pause","section_id":"places","archive_destination":"Places","routes":["note","photo"]},{"id":"ACT-05","number":5,"title":"The High Place","section_id":"places","archive_destination":"Places","routes":["photo","sketch","note"]},{"id":"ACT-06","number":6,"title":"The Hiding Place We Respect","section_id":"places","archive_destination":"Places","routes":["note","sketch"]},{"id":"ACT-07","number":7,"title":"The Place That Became Theirs","section_id":"places","archive_destination":"Places","routes":["photo","note"]},{"id":"ACT-08","number":8,"title":"The Time They Arrive","section_id":"patterns","archive_destination":"Our Story","routes":["note"]},{"id":"ACT-09","number":9,"title":"The Nap Rotation","section_id":"patterns","archive_destination":"Places","routes":["note","photo"]},{"id":"ACT-10","number":10,"title":"The Scratching Place","section_id":"patterns","archive_destination":"Photos","routes":["photo","note","video"]},{"id":"ACT-11","number":11,"title":"The Grooming Hour","section_id":"patterns","archive_destination":"Our Story","routes":["note","photo","video"]},{"id":"ACT-12","number":12,"title":"The Game They Already Know","section_id":"patterns","archive_destination":"Videos","routes":["video","note"]},{"id":"ACT-13","number":13,"title":"The Evening Route","section_id":"patterns","archive_destination":"Places","routes":["note","video"]},{"id":"ACT-14","number":14,"title":"The Water Ritual","section_id":"patterns","archive_destination":"Our Story","routes":["note","photo","audio"]},{"id":"ACT-15","number":15,"title":"The Distance They Leave","section_id":"nearness","archive_destination":"Photos","routes":["photo","note"]},{"id":"ACT-16","number":16,"title":"Near, Not Touching","section_id":"nearness","archive_destination":"Our Story","routes":["note","photo"]},{"id":"ACT-17","number":17,"title":"The Chair They Share","section_id":"nearness","archive_destination":"Photos","routes":["photo","note"]},{"id":"ACT-18","number":18,"title":"The Greeting They Offer","section_id":"nearness","archive_destination":"Our Story","routes":["note","video"]},{"id":"ACT-19","number":19,"title":"A Word That Works Here","section_id":"nearness","archive_destination":"Sounds","routes":["note","audio"]},{"id":"ACT-20","number":20,"title":"The Look You Know","section_id":"nearness","archive_destination":"Our Story","routes":["note"]},{"id":"ACT-21","number":21,"title":"When They Walk Away","section_id":"nearness","archive_destination":"Our Story","routes":["note"]},{"id":"ACT-22","number":22,"title":"The Person They Choose","section_id":"nearness","archive_destination":"Our Story","routes":["note","photo"]},{"id":"ACT-23","number":23,"title":"The Sound of Arrival","section_id":"traces","archive_destination":"Sounds","routes":["audio","note"]},{"id":"ACT-24","number":24,"title":"Before the Jump","section_id":"traces","archive_destination":"Videos","routes":["video","note","photo"]},{"id":"ACT-25","number":25,"title":"One Minute of a Usual Movement","section_id":"traces","archive_destination":"Videos","routes":["video","note"]},{"id":"ACT-26","number":26,"title":"Their Chosen Object","section_id":"traces","archive_destination":"Photos","routes":["photo","note"]},{"id":"ACT-27","number":27,"title":"The Names Used in This House","section_id":"traces","archive_destination":"Our Story","routes":["note","audio"]},{"id":"ACT-28","number":28,"title":"A Photo From Their Level","section_id":"traces","archive_destination":"Photos","routes":["photo","note"]},{"id":"ACT-29","number":29,"title":"The Soundtrack of the Room","section_id":"traces","archive_destination":"Sounds","routes":["audio","note"]},{"id":"ACT-30","number":30,"title":"The Natural Keepsake","section_id":"traces","archive_destination":"Keepsakes","routes":["physical_trace","photo","note"]},{"id":"ACT-31","number":31,"title":"One Day in This House","section_id":"one_day","archive_destination":"One Day","routes":["day_record","note","photo","audio","video"]}]</script>
+  <script>
+    const DB_NAME = "the-house-your-cat-knows-digital-archive-v1";
+    const DB_VERSION = 1;
+    const TEXT_KEY = "the-house-your-cat-knows-text-v1";
+    const activityData = JSON.parse(document.getElementById("activityData").textContent);
+    const statusEl = document.getElementById("status");
+    let dbPromise;
+
+    function setStatus(message) {
+      statusEl.textContent = message;
+      if (message) window.setTimeout(() => { if (statusEl.textContent === message) statusEl.textContent = ""; }, 3500);
+    }
+
+    function openDb() {
+      if (dbPromise) return dbPromise;
+      dbPromise = new Promise((resolve, reject) => {
+        const request = indexedDB.open(DB_NAME, DB_VERSION);
+        request.onupgradeneeded = () => {
+          const db = request.result;
+          if (!db.objectStoreNames.contains("files")) {
+            db.createObjectStore("files", { keyPath: "key" });
+          }
+        };
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+      });
+      return dbPromise;
+    }
+
+    function tx(storeName, mode = "readonly") {
+      return openDb().then((db) => db.transaction(storeName, mode).objectStore(storeName));
+    }
+
+    function idbGet(key) {
+      return tx("files").then((store) => new Promise((resolve, reject) => {
+        const request = store.get(key);
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+      }));
+    }
+
+    function idbPut(value) {
+      return tx("files", "readwrite").then((store) => new Promise((resolve, reject) => {
+        const transaction = store.transaction;
+        const request = store.put(value);
+        request.onerror = () => {};
+        transaction.oncomplete = () => resolve();
+        transaction.onabort = () => reject(transaction.error || request.error
+          || new Error("the write was not completed"));
+        transaction.onerror = () => reject(transaction.error || request.error
+          || new Error("the write failed"));
+      }));
+    }
+
+    function idbDelete(key) {
+      return tx("files", "readwrite").then((store) => new Promise((resolve, reject) => {
+        const transaction = store.transaction;
+        store.delete(key);
+        transaction.oncomplete = () => resolve();
+        transaction.onabort = () => reject(transaction.error);
+        transaction.onerror = () => reject(transaction.error);
+      }));
+    }
+
+    // Только файлы текущего архива. idbAll() отдаёт всё хранилище, то есть
+    // всех котов сразу, и без этого фильтра резервная копия одного кота
+    // увозила бы с собой чужую.
+    async function idbAllCurrent() {
+      const all = await idbAll();
+      const list = archiveList();
+      const id = currentArchiveId();
+      const prefixes = list.map((a) => a.id + "::");
+      return all.filter((item) => {
+        const key = String(item.key || "");
+        const owner = prefixes.find((pre) => key.startsWith(pre));
+        return owner ? owner === id + "::" : id === list[0].id;
+      });
+    }
+
+    function idbAll() {
+      return tx("files").then((store) => new Promise((resolve, reject) => {
+        const request = store.getAll();
+        request.onsuccess = () => resolve(request.result || []);
+        request.onerror = () => reject(request.error);
+      }));
+    }
+
+    function idbClear() {
+      return tx("files", "readwrite").then((store) => new Promise((resolve, reject) => {
+        const transaction = store.transaction;
+        store.clear();
+        transaction.oncomplete = () => resolve();
+        transaction.onabort = () => reject(transaction.error);
+        transaction.onerror = () => reject(transaction.error);
+      }));
+    }
+
+    // --- Чей это архив -------------------------------------------------
+    // Все страницы, открытые с диска, живут в одном источнике браузера, и
+    // хранилище у них общее. Поэтому две копии этого файла в разных папках
+    // были одним и тем же архивом: заметки про первого кота открывались во
+    // втором и перезаписывались. Книга говорит «одно хранилище на кота», и
+    // архив теперь это выполняет — не копиями файла, а именованными
+    // архивами внутри одного файла.
+    const LIST_KEY = "the-house-your-cat-knows-archives-v1";
+    const CURRENT_KEY = "the-house-your-cat-knows-current-archive-v1";
+
+    // В браузере, где хранилище запрещено, обращение к localStorage бросает
+    // исключение, а не возвращает null. Без обёртки страница падала на
+    // запуске — и предупреждение о том, что ничего не сохранится, не успевало
+    // показаться. Хуже этого только молчание.
+    function lsGet(key) {
+      try { return localStorage.getItem(key); } catch { return null; }
+    }
+
+    function lsSet(key, value) {
+      try { localStorage.setItem(key, value); return true; } catch { return false; }
+    }
+
+    function readJson(key, fallback) {
+      try { return JSON.parse(lsGet(key)) ?? fallback; }
+      catch { return fallback; }
+    }
+
+    function archiveList() {
+      const list = readJson(LIST_KEY, null);
+      if (Array.isArray(list) && list.length) return list;
+      // Первый запуск, или данные из версии без имён: всё, что уже лежит в
+      // хранилище, становится первым архивом, а не теряется.
+      const first = [{ id: "a1", name: "My cat" }];
+      lsSet(LIST_KEY, JSON.stringify(first));
+      return first;
+    }
+
+    function currentArchiveId() {
+      const list = archiveList();
+      const saved = lsGet(CURRENT_KEY);
+      return list.some((a) => a.id === saved) ? saved : list[0].id;
+    }
+
+    function setCurrentArchive(id) { lsSet(CURRENT_KEY, id); }
+
+    function currentArchiveName() {
+      const id = currentArchiveId();
+      return (archiveList().find((a) => a.id === id) || {}).name || "My cat";
+    }
+
+    function scoped(key) { return currentArchiveId() + "::" + key; }
+
+    function renderCatBar() {
+      const select = document.getElementById("catSelect");
+      const list = archiveList();
+      const current = currentArchiveId();
+      select.innerHTML = "";
+      for (const entry of list) {
+        const option = document.createElement("option");
+        option.value = entry.id;
+        option.textContent = entry.name;
+        option.selected = entry.id === current;
+        select.appendChild(option);
+      }
+    }
+
+    async function switchArchive(id) {
+      setCurrentArchive(id);
+      renderCatBar();
+      restoreText();
+      await restoreFiles();
+      renderBackupState();
+      setStatus("Opened the archive for " + currentArchiveName() + ".");
+    }
+
+    function textKeyForArchive() {
+      // Первый архив продолжает читать и писать старый ключ, иначе заметки,
+      // сделанные до этой версии, исчезли бы при обновлении файла.
+      const list = archiveList();
+      return currentArchiveId() === list[0].id
+        ? TEXT_KEY : TEXT_KEY + "::" + currentArchiveId();
+    }
+
+
+    // --- Работает ли вообще хранилище в этом браузере ------------------
+    // Спецификация не определяет поведение localStorage для страниц,
+    // открытых с диска: у file:-адресов нет настоящего источника, и браузеры
+    // ведут себя по-разному и меняли поведение со временем. Поэтому архив не
+    // предполагает, что запись удастся, — он проверяет и говорит вслух.
+    async function storageHealth() {
+      const out = { local: true, idb: true, reason: "" };
+      try {
+        const probe = "the-house-your-cat-knows-probe";
+        localStorage.setItem(probe, "1");
+        if (localStorage.getItem(probe) !== "1") throw new Error("read back failed");
+        localStorage.removeItem(probe);
+      } catch (err) {
+        out.local = false;
+        out.reason = (err && err.name) || "unknown";
+      }
+      try { await openDb(); } catch (err) {
+        out.idb = false;
+        out.reason = out.reason || ((err && err.name) || "unknown");
+      }
+      return out;
+    }
+
+    function showStorageWarning(health) {
+      const box = document.getElementById("storageWarning");
+      if (health.local && health.idb) { box.hidden = true; return; }
+      box.hidden = false;
+      box.innerHTML = "<strong>This browser will not let the archive save "
+        + "anything.</strong> Nothing you type or attach here will be kept. "
+        + "This happens with some browsers when a page is opened straight from "
+        + "a folder, and with private windows. Try opening this file in "
+        + "Chrome, Edge or Firefox from a normal window. If you have a backup "
+        + "ZIP from before, keep it — it is the copy that matters.";
+    }
+
+    // --- Есть ли свежая резервная копия --------------------------------
+    // Хранилище браузера — рабочая копия, а не хранение. Запись этого не
+    // говорит нигде, и покупатель узнаёт об этом в тот день, когда уже
+    // поздно. Поэтому счётчик изменений и дата последней выгрузки видны
+    // всегда.
+    const CHANGES_KEY = "the-house-your-cat-knows-changes-v1";
+    const BACKUP_KEY = "the-house-your-cat-knows-backup-v1";
+
+    // Считаются не нажатия клавиш, а то, что изменилось: иначе после
+    // абзаца заметок покупатель видит «восемьдесят изменений» и перестаёт
+    // читать эту строку вовсе.
+    function bump(what) {
+      try {
+        const map = readJson(CHANGES_KEY, {});
+        const id = currentArchiveId();
+        const list = Array.isArray(map[id]) ? map[id] : [];
+        if (!list.includes(what)) list.push(what);
+        map[id] = list;
+        lsSet(CHANGES_KEY, JSON.stringify(map));
+      } catch {}
+      renderBackupState();
+    }
+
+    function changeCount(id) {
+      const entry = readJson(CHANGES_KEY, {})[id];
+      return Array.isArray(entry) ? entry.length : 0;
+    }
+
+    function markBackedUp() {
+      try {
+        const marks = readJson(BACKUP_KEY, {});
+        marks[currentArchiveId()] = { at: new Date().toISOString() };
+        lsSet(BACKUP_KEY, JSON.stringify(marks));
+        const map = readJson(CHANGES_KEY, {});
+        map[currentArchiveId()] = [];
+        lsSet(CHANGES_KEY, JSON.stringify(map));
+      } catch {}
+      renderBackupState();
+    }
+
+    function renderBackupState() {
+      const el = document.getElementById("backupState");
+      if (!el) return;
+      const id = currentArchiveId();
+      const changes = changeCount(id);
+      const mark = readJson(BACKUP_KEY, {})[id];
+      const name = currentArchiveName();
+      if (!changes && !mark) {
+        el.className = "backup-state";
+        el.innerHTML = "<span class='dot'></span><span>Nothing saved yet for "
+          + name + ".</span>";
+        return;
+      }
+      const since = changes;
+      if (mark && since <= 0) {
+        const when = new Date(mark.at).toLocaleDateString();
+        el.className = "backup-state";
+        el.innerHTML = "<span class='dot'></span><span>Backed up on " + when
+          + ". Nothing has changed since.</span>";
+        return;
+      }
+      el.className = "backup-state warn";
+      el.innerHTML = "<span class='dot'></span><span>"
+        + (mark
+            ? since + " thing" + (since === 1 ? "" : "s") + " changed since the last backup"
+            : changes + " thing" + (changes === 1 ? "" : "s") + " saved and no backup yet")
+        + " — use <strong>Save your archive</strong>.</span>";
+    }
+
+    function textState() {
+      try {
+        return JSON.parse(lsGet(textKeyForArchive()) || "{}");
+      } catch {
+        return {};
+      }
+    }
+
+    function saveTextState(state) {
+      lsSet(textKeyForArchive(), JSON.stringify(state));
+    }
+
+
+
+    function fieldKey(el) {
+      const activity = el.closest("[data-activity-id]");
+      return activity.dataset.activityId + "::" + el.dataset.textField;
+    }
+
+    function fileKey(activityId, route) {
+      // Так же, как с заметками: первый архив сохраняет прежние ключи, у
+      // остальных к ключу добавляется, чей это архив.
+      const list = archiveList();
+      const base = activityId + "::" + route;
+      return currentArchiveId() === list[0].id
+        ? base : currentArchiveId() + "::" + base;
+    }
+
+    let textBound = false;
+
+    function restoreText() {
+      const state = textState();
+      document.querySelectorAll("[data-text-field]").forEach((el) => {
+        const key = fieldKey(el);
+        // Поле, которого в этом архиве нет, должно стать пустым, а не
+        // сохранить текст предыдущего кота: иначе при переключении заметка
+        // про Миру стоит в архиве Тоби и уедет туда с первым же нажатием.
+        el.value = Object.prototype.hasOwnProperty.call(state, key)
+          ? state[key] : "";
+        if (textBound) return;
+        el.addEventListener("input", () => {
+          const next = textState();
+          next[key] = el.value;
+          saveTextState(next);
+          bump("note:" + key);
+        });
+      });
+      textBound = true;
+    }
+
+    async function saveFile(activityId, route, file) {
+      await idbPut({
+        key: fileKey(activityId, route),
+        activityId,
+        route,
+        name: file.name,
+        type: file.type,
+        size: file.size,
+        lastModified: file.lastModified,
+        savedAt: new Date().toISOString(),
+        blob: file
+      });
+    }
+
+    // Браузер — не универсальный проигрыватель, и это не редкий случай.
+    // HEIC с айфона Chrome не рисует. ProRes внутри .mov не играет. FLAC не
+    // играет Safari. RAW не показывает никто. Файл при этом сохраняется целым
+    // и целым выходит из бэкап-ZIP — но на месте превью оставалась пустота, а
+    // пустота читается ровно одним способом: «не сохранилось». Отсюда возврат
+    // и одна звезда за работающую вещь.
+    //
+    // Поэтому отказ показа теперь говорит вслух, что именно не умеет браузер,
+    // настаивает, что файл цел, и даёт его тут же забрать.
+    const previewUrls = new WeakMap();
+
+    function fileExt(name) {
+      const match = String(name || "").match(/\.([A-Za-z0-9]{1,8})$/);
+      return match ? match[1].toUpperCase() : "";
+    }
+
+    function fileSize(bytes) {
+      const n = Number(bytes) || 0;
+      if (n < 1024) return n + " bytes";
+      if (n < 1024 * 1024) return Math.round(n / 1024) + " KB";
+      return (n / (1024 * 1024)).toFixed(1) + " MB";
+    }
+
+    function fileNote(item, url, line) {
+      const box = document.createElement("div");
+      box.className = "preview-note";
+      const said = document.createElement("p");
+      said.textContent = line;
+      box.appendChild(said);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = item.name || "attachment";
+      // Единственное доказательство, которое стоит чего-то: файл открывается.
+      link.textContent = "Save this file out →";
+      box.appendChild(link);
+      return box;
+    }
+
+    function previewFile(container, item) {
+      // Blob-адрес живёт, пока его не отпустят, а переключение между котами
+      // перерисовывает все превью: без этого каждая смена архива оставляла в
+      // памяти ещё один полный набор вложений.
+      const previous = previewUrls.get(container);
+      if (previous) {
+        URL.revokeObjectURL(previous);
+        previewUrls.delete(container);
+      }
+      container.innerHTML = "";
+      if (!item) {
+        container.textContent = "No file chosen yet.";
+        return;
+      }
+
+      const url = URL.createObjectURL(item.blob);
+      previewUrls.set(container, url);
+      const kind = String(item.type || "").split("/")[0];
+      const ext = fileExt(item.name);
+
+      // Держатель добавляется сразу, до назначения src: событие error может
+      // прийти раньше, чем элемент встал бы в документ, и тогда замена ушла
+      // бы в никуда.
+      const holder = document.createElement("div");
+      holder.className = "preview-holder";
+      container.appendChild(holder);
+      const fail = (line) => {
+        holder.textContent = "";
+        holder.appendChild(fileNote(item, url, line));
+      };
+
+      if (kind === "image") {
+        const node = document.createElement("img");
+        node.alt = item.name || "attachment";
+        node.addEventListener("error", () => fail(
+          "Saved in full, but this browser cannot show "
+          + (ext ? "this " + ext + " file" : "this image") + ". "
+          + "Nothing is wrong with the file: it is in the archive untouched, "
+          + "it is in your backup ZIP exactly as you attached it, and it opens "
+          + "in the app you normally use for photographs."));
+        node.src = url;
+        holder.appendChild(node);
+      } else if (kind === "video" || kind === "audio") {
+        const node = document.createElement(kind);
+        node.controls = true;
+        node.preload = "metadata";
+        node.addEventListener("error", () => fail(
+          "Saved in full, but this browser cannot play "
+          + (ext ? "this " + ext + " file" : "this file") + ". "
+          + "That is the browser, not the recording: the file is in the archive "
+          + "untouched, it is in your backup ZIP, and it plays in the app you "
+          + "normally use."));
+        node.src = url;
+        holder.appendChild(node);
+      } else {
+        // PDF и всё прочее: показать нечего, но сказать есть что.
+        holder.appendChild(fileNote(item, url,
+          (ext ? ext + " file" : "File") + " saved. It is not shown on this "
+          + "page, but it is in the archive and in your backup ZIP."));
+      }
+
+      const meta = document.createElement("p");
+      meta.className = "preview-meta";
+      meta.textContent = (item.name || "attachment") + " · "
+        + fileSize(item.size);
+      container.appendChild(meta);
+    }
+
+    async function restoreFiles() {
+      for (const slot of document.querySelectorAll("[data-slot-route]")) {
+        const activity = slot.closest("[data-activity-id]");
+        const route = slot.dataset.slotRoute;
+        const preview = slot.querySelector("[data-preview]");
+        const item = await idbGet(fileKey(activity.dataset.activityId, route));
+        previewFile(preview, item);
+      }
+    }
+
+    function bindFiles() {
+      document.querySelectorAll("[data-file-route]").forEach((input) => {
+        input.addEventListener("change", async () => {
+          const file = input.files && input.files[0];
+          if (!file) return;
+          const activity = input.closest("[data-activity-id]");
+          const route = input.dataset.fileRoute;
+
+          // Слот держит один файл: страница просит выбрать одно, а не
+          // приложить плёнку. Но замена молча — это потеря, и прежняя версия
+          // стирала вложение без единого слова.
+          const existing = await idbGet(fileKey(activity.dataset.activityId, route));
+          if (existing && existing.name !== file.name) {
+            const replace = window.confirm(
+              "This page already holds " + existing.name + ".\n\n"
+              + "Attaching " + file.name + " replaces it, and the old file is "
+              + "not kept anywhere. If you want both, download a backup ZIP "
+              + "first, then attach the new one.");
+            if (!replace) {
+              input.value = "";
+              setStatus("Kept " + existing.name + ". Nothing was replaced.");
+              return;
+            }
+          }
+
+          try {
+            await saveFile(activity.dataset.activityId, route, file);
+          } catch (err) {
+            console.error(err);
+            input.value = "";
+            setStatus(err && err.name === "QuotaExceededError"
+              ? "NOT saved: this browser has run out of room for " + file.name
+                + ". Free space on the device, or download a backup ZIP and "
+                + "remove some files from the archive, then try again."
+              : "NOT saved: " + file.name + " could not be written to this "
+                + "browser's storage (" + ((err && err.name) || "unknown error")
+                + ").");
+            return;
+          }
+          // Подтверждать сохранение можно только тем, что действительно
+          // прочиталось обратно: раньше «Saved» печаталось до проверки.
+          const stored = await idbGet(fileKey(activity.dataset.activityId, route));
+          previewFile(activity.querySelector('[data-preview="' + route + '"]'), stored);
+          if (stored) bump("file:" + fileKey(activity.dataset.activityId, route));
+          setStatus(stored
+            ? "Saved " + file.name + " locally."
+            : "NOT saved: " + file.name + " is not in the archive. Nothing was "
+              + "written. Try again, or free space on this device first.");
+        });
+      });
+
+      document.querySelectorAll("[data-remove-file]").forEach((button) => {
+        button.addEventListener("click", async () => {
+          const activity = button.closest("[data-activity-id]");
+          const route = button.dataset.removeFile;
+          await idbDelete(fileKey(activity.dataset.activityId, route));
+          previewFile(activity.querySelector('[data-preview="' + route + '"]'), null);
+          const input = activity.querySelector('[data-file-route="' + route + '"]');
+          if (input) input.value = "";
+          bump("file:" + fileKey(activity.dataset.activityId, route));
+          setStatus("Removed file from this archive page.");
+        });
+      });
+    }
+
+    function bindFilters() {
+      document.querySelectorAll("[data-filter]").forEach((button) => {
+        button.addEventListener("click", () => {
+          const filter = button.dataset.filter;
+          document.querySelectorAll("[data-filter]").forEach((other) => other.setAttribute("aria-pressed", String(other === button)));
+          document.querySelectorAll(".activity").forEach((activity) => {
+            const routes = activity.dataset.routes.split(",");
+            activity.hidden = filter !== "all" && !routes.includes(filter);
+          });
+        });
+      });
+    }
+
+    async function exportManifest() {
+      const files = await idbAllCurrent();
+      const payload = buildArchivePayload(files, false);
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+      downloadBlob(blob, "cat-book-digital-archive.json");
+      setStatus("Downloaded archive manifest.");
+    }
+
+    function safeFileName(name) {
+      return String(name || "file")
+        .replace(/[\\/\0-\x1f\x7f]+/g, "-")
+        .replace(/^\.+/, "")
+        .slice(0, 120) || "file";
+    }
+
+    // Резервная копия раскладывается так же, как книга велит раскладывать
+    // архив: папка назначения занятия (Places, Our Story, Photos…), внутри —
+    // папка занятия с номером и названием. Раньше было media/ACT-03/photo/…,
+    // и копия не совпадала с системой папок, которой учит книга (08.10.2026).
+    // Подпапка вида файла — только у занятия, где файлов несколько видов.
+    // Старые копии открываются по-прежнему: импорт идёт по file_path из
+    // манифеста внутри самой копии.
+    function mediaPath(item) {
+      const a = activityData.find((x) => x.id === item.activityId) || {};
+      const fileRoutes = (a.routes || []).filter((r) => r !== "note");
+      const folder = safeFileName(a.archive_destination || "Other");
+      const act = safeFileName(String(a.number || "").padStart(2, "0") + " " + (a.title || item.activityId)).trim();
+      const kind = fileRoutes.length > 1 ? safeFileName(item.route) + "/" : "";
+      return folder + "/" + act + "/" + kind + safeFileName(item.name);
+    }
+
+    function buildArchivePayload(files, includePaths) {
+      const texts = textState();
+      const activities = activityData.map((activity) => {
+        const prefix = activity.id + "::";
+        const text = {};
+        for (const [key, value] of Object.entries(texts)) {
+          if (key.startsWith(prefix)) text[key.slice(prefix.length)] = value;
+        }
+        const attachments = files
+          .filter((file) => file.activityId === activity.id)
+          .map((file) => {
+            const item = {
+              route: file.route,
+              name: file.name,
+              type: file.type,
+              size: file.size,
+              lastModified: file.lastModified,
+              savedAt: file.savedAt
+            };
+            if (includePaths) item.file_path = mediaPath(file);
+            return item;
+          });
+        return { ...activity, text, attachments };
+      });
+      return {
+        title: "THE HOUSE YOUR CAT KNOWS",
+        source_file: "CAT_BOOK_Canonical_Manuscript_v7.json",
+        source_sha256: "451a7c045eddf80270ec172d27d99c47f10218d78d71ee102d6c2f17e5036b0e",
+        exported_at: new Date().toISOString(),
+        note: includePaths
+          ? "This ZIP contains notes plus the attached media files. Keep another backup outside this browser."
+          : "This manifest records notes and attachment metadata. Keep the original media files backed up separately.",
+        activities
+      };
+    }
+
+    function downloadBlob(blob, filename) {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function crc32(bytes) {
+      let crc = -1;
+      for (let i = 0; i < bytes.length; i++) {
+        crc ^= bytes[i];
+        for (let j = 0; j < 8; j++) {
+          crc = (crc >>> 1) ^ (0xedb88320 & -(crc & 1));
+        }
+      }
+      return (crc ^ -1) >>> 0;
+    }
+
+    function writeU16(view, offset, value) {
+      view.setUint16(offset, value, true);
+    }
+
+    function writeU32(view, offset, value) {
+      view.setUint32(offset, value >>> 0, true);
+    }
+
+    function dosTimeDate(date) {
+      const year = Math.max(1980, date.getFullYear());
+      const dosTime = (date.getHours() << 11) | (date.getMinutes() << 5) | Math.floor(date.getSeconds() / 2);
+      const dosDate = ((year - 1980) << 9) | ((date.getMonth() + 1) << 5) | date.getDate();
+      return { dosTime, dosDate };
+    }
+
+    function makeStoredZip(entries) {
+      const encoder = new TextEncoder();
+      const chunks = [];
+      const central = [];
+      let offset = 0;
+      const now = dosTimeDate(new Date());
+
+      for (const entry of entries) {
+        const nameBytes = encoder.encode(entry.name);
+        const data = entry.data instanceof Uint8Array ? entry.data : new Uint8Array(entry.data);
+        const crc = crc32(data);
+        const local = new Uint8Array(30 + nameBytes.length);
+        const localView = new DataView(local.buffer);
+        writeU32(localView, 0, 0x04034b50);
+        writeU16(localView, 4, 20);
+        writeU16(localView, 6, 0x0800);
+        writeU16(localView, 8, 0);
+        writeU16(localView, 10, now.dosTime);
+        writeU16(localView, 12, now.dosDate);
+        writeU32(localView, 14, crc);
+        writeU32(localView, 18, data.length);
+        writeU32(localView, 22, data.length);
+        writeU16(localView, 26, nameBytes.length);
+        writeU16(localView, 28, 0);
+        local.set(nameBytes, 30);
+        chunks.push(local, data);
+
+        const centralHeader = new Uint8Array(46 + nameBytes.length);
+        const centralView = new DataView(centralHeader.buffer);
+        writeU32(centralView, 0, 0x02014b50);
+        writeU16(centralView, 4, 20);
+        writeU16(centralView, 6, 20);
+        writeU16(centralView, 8, 0x0800);
+        writeU16(centralView, 10, 0);
+        writeU16(centralView, 12, now.dosTime);
+        writeU16(centralView, 14, now.dosDate);
+        writeU32(centralView, 16, crc);
+        writeU32(centralView, 20, data.length);
+        writeU32(centralView, 24, data.length);
+        writeU16(centralView, 28, nameBytes.length);
+        writeU16(centralView, 30, 0);
+        writeU16(centralView, 32, 0);
+        writeU16(centralView, 34, 0);
+        writeU16(centralView, 36, 0);
+        writeU32(centralView, 38, 0);
+        writeU32(centralView, 42, offset);
+        centralHeader.set(nameBytes, 46);
+        central.push(centralHeader);
+
+        offset += local.length + data.length;
+      }
+
+      const centralOffset = offset;
+      const centralSize = central.reduce((sum, chunk) => sum + chunk.length, 0);
+      const end = new Uint8Array(22);
+      const endView = new DataView(end.buffer);
+      writeU32(endView, 0, 0x06054b50);
+      writeU16(endView, 4, 0);
+      writeU16(endView, 6, 0);
+      writeU16(endView, 8, entries.length);
+      writeU16(endView, 10, entries.length);
+      writeU32(endView, 12, centralSize);
+      writeU32(endView, 16, centralOffset);
+      writeU16(endView, 20, 0);
+
+      return new Blob([...chunks, ...central, end], { type: "application/zip" });
+    }
+
+    async function buildFullArchiveZipBlob() {
+      const encoder = new TextEncoder();
+      const files = await idbAllCurrent();
+      const payload = buildArchivePayload(files, true);
+      const entries = [
+        {
+          name: "START_HERE.txt",
+          data: encoder.encode("THE HOUSE YOUR CAT KNOWS digital archive backup\n\nOpen cat-book-digital-archive.json to see the archive map. Media files are stored in the media folder. To restore, use Import archive ZIP inside CAT_BOOK_Digital_Archive_v1.html.\n")
+        },
+        {
+          name: "cat-book-digital-archive.json",
+          data: encoder.encode(JSON.stringify(payload, null, 2))
+        }
+      ];
+      for (const file of files) {
+        entries.push({
+          name: mediaPath(file),
+          data: new Uint8Array(await file.blob.arrayBuffer())
+        });
+      }
+      return makeStoredZip(entries);
+    }
+
+    async function exportFullArchiveZip() {
+      const blob = await buildFullArchiveZipBlob();
+      const slug = currentArchiveName().toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "archive";
+      downloadBlob(blob, "the-house-your-cat-knows-" + slug + "-archive.zip");
+      markBackedUp();
+      setStatus("Downloaded the backup ZIP for " + currentArchiveName() + ".");
+    }
+
+    async function parseStoredZip(file) {
+      const bytes = new Uint8Array(await file.arrayBuffer());
+      const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+      let eocd = -1;
+      for (let i = bytes.length - 22; i >= 0; i--) {
+        if (view.getUint32(i, true) === 0x06054b50) {
+          eocd = i;
+          break;
+        }
+      }
+      if (eocd < 0) throw new Error("ZIP end record not found.");
+      const entries = view.getUint16(eocd + 10, true);
+      const centralOffset = view.getUint32(eocd + 16, true);
+      const decoder = new TextDecoder();
+      const out = new Map();
+      let ptr = centralOffset;
+      for (let i = 0; i < entries; i++) {
+        if (view.getUint32(ptr, true) !== 0x02014b50) throw new Error("ZIP central directory is not readable.");
+        const method = view.getUint16(ptr + 10, true);
+        const compressedSize = view.getUint32(ptr + 20, true);
+        const nameLength = view.getUint16(ptr + 28, true);
+        const extraLength = view.getUint16(ptr + 30, true);
+        const commentLength = view.getUint16(ptr + 32, true);
+        const localOffset = view.getUint32(ptr + 42, true);
+        const name = decoder.decode(bytes.slice(ptr + 46, ptr + 46 + nameLength));
+        if (method !== 0) throw new Error("This archive uses compressed ZIP entries this version cannot import.");
+        const localNameLength = view.getUint16(localOffset + 26, true);
+        const localExtraLength = view.getUint16(localOffset + 28, true);
+        const dataStart = localOffset + 30 + localNameLength + localExtraLength;
+        out.set(name, bytes.slice(dataStart, dataStart + compressedSize));
+        ptr += 46 + nameLength + extraLength + commentLength;
+      }
+      return out;
+    }
+
+    async function importFullArchiveZip(file) {
+      const entries = await parseStoredZip(file);
+      const manifestBytes = entries.get("cat-book-digital-archive.json");
+      if (!manifestBytes) throw new Error("cat-book-digital-archive.json is missing.");
+      const manifest = JSON.parse(new TextDecoder().decode(manifestBytes));
+      const nextText = {};
+      await idbClear();
+      for (const activity of manifest.activities || []) {
+        for (const [field, value] of Object.entries(activity.text || {})) {
+          nextText[activity.id + "::" + field] = value;
+        }
+        for (const attachment of activity.attachments || []) {
+          if (!attachment.file_path || !entries.has(attachment.file_path)) continue;
+          const data = entries.get(attachment.file_path);
+          const blob = new Blob([data], { type: attachment.type || "application/octet-stream" });
+          await idbPut({
+            key: fileKey(activity.id, attachment.route),
+            activityId: activity.id,
+            route: attachment.route,
+            name: attachment.name,
+            type: attachment.type,
+            size: attachment.size || data.length,
+            lastModified: attachment.lastModified || Date.now(),
+            savedAt: attachment.savedAt || new Date().toISOString(),
+            blob
+          });
+        }
+      }
+      saveTextState(nextText);
+      restoreText();
+      await restoreFiles();
+      setStatus("Imported archive ZIP.");
+      return manifest;
+    }
+
+    document.getElementById("exportManifest").addEventListener("click", exportManifest);
+    document.getElementById("exportFullArchive").addEventListener("click", exportFullArchiveZip);
+    document.getElementById("importArchive").addEventListener("click", () => document.getElementById("importArchiveInput").click());
+    document.getElementById("importArchiveInput").addEventListener("change", async (event) => {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+      try {
+        await importFullArchiveZip(file);
+      } catch (err) {
+        console.error(err);
+        setStatus("Import failed: " + err.message);
+      } finally {
+        event.target.value = "";
+      }
+    });
+    document.getElementById("printArchive").addEventListener("click", () => window.print());
+
+    document.getElementById("catSelect").addEventListener("change", (event) => {
+      switchArchive(event.target.value);
+    });
+
+    document.getElementById("addCat").addEventListener("click", async () => {
+      const name = (prompt("What is this cat called?") || "").trim();
+      if (!name) return;
+      const list = archiveList();
+      const id = "a" + (Date.now().toString(36));
+      list.push({ id, name });
+      localStorage.setItem(LIST_KEY, JSON.stringify(list));
+      await switchArchive(id);
+    });
+
+    document.getElementById("renameCat").addEventListener("click", () => {
+      const list = archiveList();
+      const id = currentArchiveId();
+      const entry = list.find((a) => a.id === id);
+      const name = (prompt("Rename this archive", entry ? entry.name : "") || "").trim();
+      if (!name || !entry) return;
+      entry.name = name;
+      lsSet(LIST_KEY, JSON.stringify(list));
+      renderCatBar();
+      setStatus("Renamed this archive to " + name + ".");
+    });
+
+    storageHealth().then(showStorageWarning);
+
+    // Где открыт архив. Файл с диска: подсказать адрес страницы для телефона.
+    // Страница по адресу: попросить браузер не вычищать хранилище и на
+    // iPhone/iPad подсказать «На экран Домой» — Safari вычищает записанное
+    // сайтом через семь дней без визита, но не у приложений с экрана Домой.
+    (function placeHints() {
+      const web = location.protocol === "http:" || location.protocol === "https:";
+      const ios = /iPad|iPhone|iPod/.test(navigator.userAgent)
+        || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+      const standalone = window.navigator.standalone === true
+        || (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches);
+      if (!web && "https://quiet-days-books.github.io/the-house-your-cat-knows/") document.getElementById("phoneLink").hidden = false;
+      if (web && ios && !standalone) document.getElementById("homeScreenTip").hidden = false;
+      if (web && navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {});
+    })();
+    renderCatBar();
+    renderBackupState();
+    restoreText();
+    bindFiles();
+    bindFilters();
+
+    openDb().then(restoreFiles).catch((err) => {
+      console.error(err);
+      setStatus("This browser blocked local file storage. Try opening the archive in Chrome, Edge or Safari from a normal browser window.");
+    });
+  </script>
+</body>
+</html>
