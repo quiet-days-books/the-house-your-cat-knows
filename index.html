@@ -2390,12 +2390,30 @@
     function idbGet(key) {
       return tx("files").then((store) => new Promise((resolve, reject) => {
         const request = store.get(key);
-        request.onsuccess = () => resolve(request.result);
+        request.onsuccess = () => resolve(withBlob(request.result));
         request.onerror = () => reject(request.error);
       }));
     }
 
-    function idbPut(value) {
+    // Файл хранится байтами (ArrayBuffer), а не объектом Blob. WebKit (Safari)
+    // в части режимов не умеет класть Blob в IndexedDB и отвечает UnknownError —
+    // фото молча не сохранялось (проверка в движке Safari, 08.10.2026).
+    // Байты кладут все браузеры. Записи старого вида (с blob) читаются как были.
+    function withBlob(item) {
+      if (item && !item.blob && item.bytes) {
+        item.blob = new Blob([item.bytes], { type: item.type || "application/octet-stream" });
+      }
+      return item;
+    }
+
+    // Любая запись идёт через это место, и Blob здесь же становится байтами —
+    // чтобы ни один путь (выбор файла, импорт ZIP) не положил в хранилище то,
+    // что Safari отвергает.
+    async function idbPut(value) {
+      if (value && value.blob) {
+        const { blob, ...rest } = value;
+        value = { ...rest, bytes: await blob.arrayBuffer() };
+      }
       return tx("files", "readwrite").then((store) => new Promise((resolve, reject) => {
         const transaction = store.transaction;
         const request = store.put(value);
@@ -2436,7 +2454,7 @@
     function idbAll() {
       return tx("files").then((store) => new Promise((resolve, reject) => {
         const request = store.getAll();
-        request.onsuccess = () => resolve(request.result || []);
+        request.onsuccess = () => resolve((request.result || []).map(withBlob));
         request.onerror = () => reject(request.error);
       }));
     }
@@ -2699,7 +2717,7 @@
         size: file.size,
         lastModified: file.lastModified,
         savedAt: new Date().toISOString(),
-        blob: file
+        bytes: await file.arrayBuffer()
       });
     }
 
@@ -3074,7 +3092,7 @@
       const entries = [
         {
           name: "START_HERE.txt",
-          data: encoder.encode("THE HOUSE YOUR CAT KNOWS digital archive backup\n\nOpen cat-book-digital-archive.json to see the archive map. Media files are stored in the media folder. To restore, use Import archive ZIP inside CAT_BOOK_Digital_Archive_v1.html.\n")
+          data: encoder.encode("THE HOUSE YOUR CAT KNOWS digital archive backup\n\nOpen cat-book-digital-archive.json to see the archive map. Your files are in folders named as in the book (Places, Photos, Videos, Sounds, Our Story, One Day), one folder per activity. To carry on, press Open an archive ZIP in the digital archive and choose this file.\n")
         },
         {
           name: "cat-book-digital-archive.json",
