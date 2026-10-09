@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-title" content="Cat Archive" />
@@ -282,6 +283,11 @@
     text-transform: uppercase; color: #5c6557; font-weight: 600; }
   .cats select { font: inherit; padding: 0.35rem 0.5rem; border: 1px solid #d7d4cc;
     background: #fbfaf6; color: #24211e; border-radius: 2px; min-width: 11rem; }
+  .import-choice { max-width: min(30rem, calc(100vw - 2rem)); border: 1px solid #d7d4cc;
+    border-radius: 6px; padding: 1.2rem; background: #fbfaf6; color: #24211e; }
+  .import-choice::backdrop { background: rgba(36, 33, 30, 0.35); }
+  .import-choice p { margin: 0 0 0.8rem; line-height: 1.45; }
+  .choice-buttons { display: flex; flex-wrap: wrap; gap: 0.5rem; }
 </style>
 </head>
 <body>
@@ -311,10 +317,22 @@
       <div class="status" id="status" role="status"></div>
     </section>
 
+    <dialog id="importChoice" class="import-choice" aria-labelledby="importChoiceTitle">
+      <form method="dialog">
+        <p id="importChoiceTitle"><strong>Open this archive ZIP</strong></p>
+        <p id="importChoiceText"></p>
+        <div class="choice-buttons">
+          <button value="new">Open it as a new cat</button>
+          <button value="replace" class="secondary">Replace <span id="importChoiceCat"></span></button>
+          <button value="cancel" class="secondary">Cancel</button>
+        </div>
+      </form>
+    </dialog>
+
     <p class="notice web-hint" id="phoneLink" hidden>On a phone or tablet? Open this archive in your browser instead: <a href="https://quiet-days-books.github.io/the-house-your-cat-knows/">quiet-days-books.github.io/the-house-your-cat-knows</a>. A file opened from your phone’s Files app can show this page but cannot save anything.</p>
     <p class="notice web-hint" id="homeScreenTip" hidden><strong>On iPhone or iPad:</strong> tap <strong>Share → Add to Home Screen</strong> and open the archive from there. Safari keeps a home-screen archive; in an ordinary tab it may clear what you saved after a week without a visit. Save a ZIP either way.</p>
 
-    <p class="notice">Each cat has its own archive here. Switching cats above changes which notes and files you are looking at; nothing is mixed and nothing is lost. Files stay on this device, in this browser. Use <strong>Save your archive</strong> to keep a copy you can open anywhere, and keep your original photos, videos and sounds too. <strong>Download a backup on the first day, not on the day you need it</strong> — clearing this browser’s data removes the archive.</p>
+    <p class="notice">Each cat has its own archive here. Switching cats above changes which notes and files you are looking at; nothing is mixed and nothing is lost. Opening a backup ZIP asks first whether it is a new cat or should replace the one on screen, and never touches the other cats. Files stay on this device, in this browser. Use <strong>Save your archive</strong> to keep a copy you can open anywhere, and keep your original photos, videos and sounds too. Short clips work best: a browser keeps only so much, and a long video makes the backup ZIP large. <strong>Download a backup on the first day, not on the day you need it</strong> — clearing this browser’s data removes the archive.</p>
 
     <nav class="filters" aria-label="Filter activities">
       <button type="button" data-filter="all" aria-pressed="true">All</button>
@@ -2356,14 +2374,8 @@
       }));
     }
 
-    function idbClear() {
-      return tx("files", "readwrite").then((store) => new Promise((resolve, reject) => {
-        const transaction = store.transaction;
-        store.clear();
-        transaction.oncomplete = () => resolve();
-        transaction.onabort = () => reject(transaction.error);
-        transaction.onerror = () => reject(transaction.error);
-      }));
+    async function idbClearCurrent() {
+      for (const item of await idbAllCurrent()) await idbDelete(item.key);
     }
 
     const LIST_KEY = "the-house-your-cat-knows-archives-v1";
@@ -2689,6 +2701,17 @@
           const activity = input.closest("[data-activity-id]");
           const route = input.dataset.fileRoute;
 
+          const largeMb = 100;
+          if (largeMb && file.size > largeMb * 1e6 && !window.confirm(
+              file.name + " is " + Math.round(file.size / 1e6) + " MB. "
+              + "A browser keeps only so much, and a file this large makes the "
+              + "backup ZIP slow to save and open. A shorter clip works best.\n\n"
+              + "Attach it anyway?")) {
+            input.value = "";
+            setStatus("Did not attach " + file.name + ".");
+            return;
+          }
+
           const existing = await idbGet(fileKey(activity.dataset.activityId, route));
           if (existing && existing.name !== file.name) {
             const replace = window.confirm(
@@ -2804,6 +2827,7 @@
       });
       return {
         title: "THE HOUSE YOUR CAT KNOWS",
+        cat: currentArchiveName(),
         edition: "First edition, 2026 · v1.0",
         exported_at: new Date().toISOString(),
         note: includePaths
@@ -2989,7 +3013,7 @@
       if (!manifestBytes) throw new Error("cat-book-digital-archive.json is missing.");
       const manifest = JSON.parse(new TextDecoder().decode(manifestBytes));
       const nextText = {};
-      await idbClear();
+      await idbClearCurrent();
       for (const activity of manifest.activities || []) {
         for (const [field, value] of Object.entries(activity.text || {})) {
           nextText[activity.id + "::" + field] = value;
@@ -3025,6 +3049,9 @@
       const file = event.target.files && event.target.files[0];
       if (!file) return;
       try {
+        const choice = await askImportTarget(file);
+        if (choice === "cancel") { setStatus("Nothing was opened. Every archive is as it was."); return; }
+        if (choice === "new") await addArchive(await zipCatName(file));
         await importFullArchiveZip(file);
       } catch (err) {
         console.error(err);
@@ -3039,15 +3066,54 @@
       switchArchive(event.target.value);
     });
 
-    document.getElementById("addCat").addEventListener("click", async () => {
-      const name = (prompt("What is this cat called?") || "").trim();
-      if (!name) return;
+    async function addArchive(name) {
       const list = archiveList();
       const id = "a" + (Date.now().toString(36));
       list.push({ id, name });
-      localStorage.setItem(LIST_KEY, JSON.stringify(list));
+      lsSet(LIST_KEY, JSON.stringify(list));
       await switchArchive(id);
+    }
+
+    document.getElementById("addCat").addEventListener("click", async () => {
+      const name = (prompt("What is this cat called?") || "").trim();
+      if (!name) return;
+      await addArchive(name);
     });
+
+    async function zipCatName(file) {
+      try {
+        const bytes = (await parseStoredZip(file)).get("cat-book-digital-archive.json");
+        const name = String(JSON.parse(new TextDecoder().decode(bytes)).cat || "").trim();
+        if (name) return name;
+      } catch {}
+      return "Cat from " + file.name.replace(/\.zip$/i, "");
+    }
+
+    async function currentIsEmpty() {
+      const text = Object.values(textState()).some((v) => String(v || "").trim());
+      return !text && !(await idbAllCurrent()).length;
+    }
+
+    async function askImportTarget(file) {
+      if (await currentIsEmpty()) return "replace";
+      const dialog = document.getElementById("importChoice");
+      const name = currentArchiveName();
+      document.getElementById("importChoiceCat").textContent = name;
+      document.getElementById("importChoiceText").textContent =
+        "The archive for " + name + " already holds notes or files. "
+        + "Open " + file.name + " as a new cat, or replace what " + name
+        + " holds with it. Replacing removes " + name + "’s current notes and files; "
+        + "the other cats are not touched.";
+      if (typeof dialog.showModal !== "function") {
+        if (confirm("Open " + file.name + " as a new cat? Press Cancel to choose replace.")) return "new";
+        return confirm("Replace everything " + name + " holds with " + file.name + "?") ? "replace" : "cancel";
+      }
+      return new Promise((resolve) => {
+        dialog.returnValue = "cancel";
+        dialog.addEventListener("close", () => resolve(dialog.returnValue || "cancel"), { once: true });
+        dialog.showModal();
+      });
+    }
 
     document.getElementById("renameCat").addEventListener("click", () => {
       const list = archiveList();
